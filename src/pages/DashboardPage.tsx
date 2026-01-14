@@ -1,4 +1,4 @@
-const Dashboard = () => {
+const DashboardPage = () => {
   return (
     <div className="space-y-6">
       <div>
@@ -9,4 +9,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardPage;
