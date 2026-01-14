@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { type BaseKey, useShowButton } from "@refinedev/core";
-import { Eye } from "lucide-react";
-import React from "react";
+import { Button } from '@/components/ui/button';
+import { type BaseKey, useShowButton } from '@refinedev/core';
+import { Eye } from 'lucide-react';
+import React from 'react';
 
 type ShowButtonProps = {
   /**
@@ -30,14 +30,8 @@ type ShowButtonProps = {
   meta?: Record<string, unknown>;
 } & React.ComponentProps<typeof Button>;
 
-export const ShowButton = React.forwardRef<
-  React.ComponentRef<typeof Button>,
-  ShowButtonProps
->(
-  (
-    { resource, recordItemId, accessControl, meta, children, onClick, ...rest },
-    ref
-  ) => {
+export const ShowButton = React.forwardRef<React.ComponentRef<typeof Button>, ShowButtonProps>(
+  ({ resource, recordItemId, accessControl, meta, children, onClick, ...rest }, ref) => {
     const { hidden, disabled, LinkComponent, to, label } = useShowButton({
       resource,
       id: recordItemId,
@@ -51,7 +45,11 @@ export const ShowButton = React.forwardRef<
     if (isHidden) return null;
 
     return (
-      <Button {...rest} ref={ref} disabled={isDisabled} asChild>
+      <Button
+        {...rest}
+        ref={ref}
+        disabled={isDisabled}
+        asChild>
         <LinkComponent
           to={to}
           replace={false}
@@ -64,8 +62,7 @@ export const ShowButton = React.forwardRef<
               e.preventDefault();
               onClick(e);
             }
-          }}
-        >
+          }}>
           {children ?? (
             <div className="flex items-center gap-2 font-semibold">
               <Eye className="h-4 w-4" />
@@ -78,4 +75,4 @@ export const ShowButton = React.forwardRef<
   }
 );
 
-ShowButton.displayName = "ShowButton";
+ShowButton.displayName = 'ShowButton';

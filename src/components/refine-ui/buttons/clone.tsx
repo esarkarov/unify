@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { type BaseKey, useCloneButton } from "@refinedev/core";
-import { Copy } from "lucide-react";
-import React from "react";
+import { Button } from '@/components/ui/button';
+import { type BaseKey, useCloneButton } from '@refinedev/core';
+import { Copy } from 'lucide-react';
+import React from 'react';
 
 type CloneButtonProps = {
   /**
@@ -30,14 +30,8 @@ type CloneButtonProps = {
   meta?: Record<string, unknown>;
 } & React.ComponentProps<typeof Button>;
 
-export const CloneButton = React.forwardRef<
-  React.ComponentRef<typeof Button>,
-  CloneButtonProps
->(
-  (
-    { resource, recordItemId, accessControl, meta, children, onClick, ...rest },
-    ref
-  ) => {
+export const CloneButton = React.forwardRef<React.ComponentRef<typeof Button>, CloneButtonProps>(
+  ({ resource, recordItemId, accessControl, meta, children, onClick, ...rest }, ref) => {
     const { hidden, disabled, LinkComponent, to, label } = useCloneButton({
       accessControl,
       resource,
@@ -51,7 +45,11 @@ export const CloneButton = React.forwardRef<
     if (isHidden) return null;
 
     return (
-      <Button {...rest} ref={ref} disabled={isDisabled} asChild>
+      <Button
+        {...rest}
+        ref={ref}
+        disabled={isDisabled}
+        asChild>
         <LinkComponent
           to={to}
           replace={false}
@@ -64,8 +62,7 @@ export const CloneButton = React.forwardRef<
               e.preventDefault();
               onClick(e);
             }
-          }}
-        >
+          }}>
           {children ?? (
             <div className="flex items-center gap-2 font-semibold">
               <Copy className="h-4 w-4" />
@@ -78,4 +75,4 @@ export const CloneButton = React.forwardRef<
   }
 );
 
-CloneButton.displayName = "CloneButton";
+CloneButton.displayName = 'CloneButton';
