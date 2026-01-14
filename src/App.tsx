@@ -3,9 +3,9 @@ import { Toaster } from '@/components/refine-ui/notification/toaster';
 import { useNotificationProvider } from '@/components/refine-ui/notification/use-notification-provider';
 import { ThemeProvider } from '@/components/refine-ui/theme/theme-provider';
 import DashboardPage from '@/pages/DashboardPage';
-import SubjectsCreatePage from '@/pages/SubjectsCreatePage';
+import SubjectCreatePage from '@/pages/SubjectCreatePage';
 import SubjectsListPage from '@/pages/SubjectsListPage';
-import SubjectsShowPage from '@/pages/SubjectsShowPage';
+import SubjectDetailsPage from '@/pages/SubjectDetailsPage';
 import { dataProvider } from '@/providers/data';
 import { Authenticated, Refine } from '@refinedev/core';
 import { DevtoolsPanel } from '@refinedev/devtools';
@@ -70,11 +70,11 @@ function App() {
                   />
                   <Route
                     path="create"
-                    element={<SubjectsCreatePage />}
+                    element={<SubjectCreatePage />}
                   />
                   <Route
                     path="show/:id"
-                    element={<SubjectsShowPage />}
+                    element={<SubjectDetailsPage />}
                   />
                 </Route>
               </Route>
