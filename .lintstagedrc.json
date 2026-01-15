@@ -1,4 +1,7 @@
 {
-  "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
-  "*.{json,md,mdx,css,html,yml,yaml}": ["prettier --write"]
+  "apps/frontend/**/*.{js,jsx,ts,tsx}": [
+    "pnpm --filter frontend exec eslint --fix",
+    "pnpm --filter frontend exec prettier --write"
+  ],
+  "apps/frontend/**/*.{json,md,css,scss,html,yml,yaml}": ["pnpm --filter frontend exec prettier --write"]
 }
