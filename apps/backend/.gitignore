@@ -20,6 +20,9 @@
 # husky
 /.husky
 
+# drizzle
+/drizzle
+
 # production
 /build
 /dist
