@@ -1,7 +1,6 @@
 {
-  "apps/frontend/**/*.{js,jsx,ts,tsx}": [
-    "pnpm --filter frontend exec eslint --fix",
-    "pnpm --filter frontend exec prettier --write"
-  ],
-  "apps/frontend/**/*.{json,md,css,scss,html,yml,yaml}": ["pnpm --filter frontend exec prettier --write"]
+  "apps/**/*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+  "packages/**/*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+  "*.{json,md,yml,yaml}": ["prettier --write"],
+  "apps/**/*.{css,scss,html}": ["prettier --write"]
 }

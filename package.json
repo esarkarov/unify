@@ -1,22 +1,22 @@
 {
   "name": "unify",
   "version": "1.0.0",
-  "description": "",
+  "description": "university management dashboard app",
   "private": true,
   "scripts": {
     "frontend": "pnpm --filter frontend dev",
     "frontend:build": "pnpm --filter frontend build",
     "lint": "pnpm --recursive lint",
-    "prettier": "pnpm -recursive prettier",
+    "lint:fix": "pnpm --recursive lint:fix",
+    "prettier": "pnpm --recursive prettier",
+    "prettier:check": "pnpm --recursive prettier:check",
     "type-check": "pnpm --recursive type-check",
     "prepare": "husky"
   },
   "devDependencies": {
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "typescript": "^5.9.3"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+    "typescript": "^5.9.3",
+    "prettier": "^3.7.4"
+  }
 }
