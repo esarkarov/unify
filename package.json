@@ -6,6 +6,8 @@
   "scripts": {
     "frontend": "pnpm --filter frontend dev",
     "frontend:build": "pnpm --filter frontend build",
+    "backend": "pnpm --filter backend dev",
+    "backend:build": "pnpm --filter backend build",
     "lint": "pnpm --recursive lint",
     "lint:fix": "pnpm --recursive lint:fix",
     "prettier": "pnpm --recursive prettier",
@@ -17,6 +19,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "typescript": "^5.9.3",
-    "prettier": "^3.7.4"
+    "prettier": "^3.7.4",
+    "eslint": "^9.39.2"
   }
 }
