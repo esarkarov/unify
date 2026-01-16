@@ -1,5 +1,6 @@
-import { logger } from '@/shared/logger';
 import { NextFunction, Request, Response } from 'express';
+
+import { logger } from '@/shared/logger';
 
 export class AppError extends Error {
   constructor(
@@ -13,14 +14,14 @@ export class AppError extends Error {
   }
 }
 
-export const errorHandler = (err: Error | AppError, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: AppError | Error, req: Request, res: Response) => {
   if (err instanceof AppError) {
     logger.error('Application error', {
       message: err.message,
-      statusCode: err.statusCode,
-      path: req.path,
       method: req.method,
+      path: req.path,
       stack: err.stack,
+      statusCode: err.statusCode,
     });
 
     return res.status(err.statusCode).json({
@@ -30,8 +31,8 @@ export const errorHandler = (err: Error | AppError, req: Request, res: Response,
 
   logger.error('Unexpected error', {
     message: err.message,
-    path: req.path,
     method: req.method,
+    path: req.path,
     stack: err.stack,
   });
 
@@ -40,7 +41,7 @@ export const errorHandler = (err: Error | AppError, req: Request, res: Response,
   });
 };
 
-export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => {
+export const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>) => {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };

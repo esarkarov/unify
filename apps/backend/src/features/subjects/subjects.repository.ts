@@ -1,34 +1,25 @@
+import { and, desc, eq, getTableColumns, ilike, or, sql, SQL } from 'drizzle-orm';
+
 import { departments } from '@/features/departments/departments.schema';
 import { subjects } from '@/features/subjects/subjects.schema';
 import { CreateSubjectDto, SubjectWithDepartment } from '@/features/subjects/subjects.types';
 import { db } from '@/shared/db';
 import { logger } from '@/shared/logger';
-import { and, desc, eq, getTableColumns, ilike, or, sql, SQL } from 'drizzle-orm';
 
 class SubjectsRepository {
-  async findMany(whereClause: SQL | undefined, limit: number, offset: number): Promise<SubjectWithDepartment[]> {
-    try {
-      logger.debug('Repository: Finding subjects', { limit, offset });
+  buildWhereClause(search?: string, department?: string): SQL | undefined {
+    const conditions: (SQL | undefined)[] = [];
 
-      const results = await db
-        .select({
-          ...getTableColumns(subjects),
-          department: {
-            ...getTableColumns(departments),
-          },
-        })
-        .from(subjects)
-        .leftJoin(departments, eq(subjects.departmentId, departments.id))
-        .where(whereClause)
-        .orderBy(desc(subjects.createdAt))
-        .limit(limit)
-        .offset(offset);
-
-      return results;
-    } catch (error) {
-      logger.error('Repository error: findMany', { error });
-      throw error;
+    if (search) {
+      conditions.push(or(ilike(subjects.name, `%${search}%`), ilike(subjects.code, `%${search}%`)));
     }
+
+    if (department) {
+      conditions.push(ilike(departments.name, `%${department}%`));
+    }
+
+    const validConditions = conditions.filter((c): c is SQL => c !== undefined);
+    return validConditions.length > 0 ? and(...validConditions) : undefined;
   }
 
   async count(whereClause: SQL | undefined): Promise<number> {
@@ -56,24 +47,34 @@ class SubjectsRepository {
 
       return created;
     } catch (error) {
-      logger.error('Repository error: create', { error, data });
+      logger.error('Repository error: create', { data, error });
       throw error;
     }
   }
 
-  buildWhereClause(search?: string, department?: string): SQL | undefined {
-    const conditions: (SQL | undefined)[] = [];
+  async findMany(whereClause: SQL | undefined, limit: number, offset: number): Promise<SubjectWithDepartment[]> {
+    try {
+      logger.debug('Repository: Finding subjects', { limit, offset });
 
-    if (search) {
-      conditions.push(or(ilike(subjects.name, `%${search}%`), ilike(subjects.code, `%${search}%`)));
+      const results = await db
+        .select({
+          ...getTableColumns(subjects),
+          department: {
+            ...getTableColumns(departments),
+          },
+        })
+        .from(subjects)
+        .leftJoin(departments, eq(subjects.departmentId, departments.id))
+        .where(whereClause)
+        .orderBy(desc(subjects.createdAt))
+        .limit(limit)
+        .offset(offset);
+
+      return results;
+    } catch (error) {
+      logger.error('Repository error: findMany', { error });
+      throw error;
     }
-
-    if (department) {
-      conditions.push(ilike(departments.name, `%${department}%`));
-    }
-
-    const validConditions = conditions.filter((c): c is SQL => c !== undefined);
-    return validConditions.length > 0 ? and(...validConditions) : undefined;
   }
 }
 

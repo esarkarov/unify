@@ -1,9 +1,9 @@
-import winston from 'winston';
 import path from 'path';
+import winston from 'winston';
 
-const { combine, timestamp, printf, colorize, errors } = winston.format;
+const { colorize, combine, errors, printf, timestamp } = winston.format;
 
-const logFormat = printf(({ level, message, timestamp, stack, ...metadata }) => {
+const logFormat = printf(({ level, message, stack, timestamp, ...metadata }) => {
   let log = `${timestamp} [${level}]: ${message}`;
 
   if (Object.keys(metadata).length > 0) {
@@ -18,8 +18,8 @@ const logFormat = printf(({ level, message, timestamp, stack, ...metadata }) => 
 });
 
 export const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'info',
   format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), errors({ stack: true }), logFormat),
+  level: process.env.LOG_LEVEL || 'info',
   transports: [
     new winston.transports.Console({
       format: combine(colorize(), timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), logFormat),
@@ -27,13 +27,13 @@ export const logger = winston.createLogger({
     new winston.transports.File({
       filename: path.join('logs', 'error.log'),
       level: 'error',
-      maxsize: 5242880, 
       maxFiles: 5,
+      maxsize: 5242880,
     }),
     new winston.transports.File({
       filename: path.join('logs', 'combined.log'),
-      maxsize: 5242880, 
       maxFiles: 5,
+      maxsize: 5242880,
     }),
   ],
 });

@@ -4,41 +4,6 @@ import { logger } from '@/shared/logger';
 import { AppError } from '@/shared/middlewares/error.middleware';
 
 class SubjectsService {
-  async getSubjects(query: GetSubjectsQuery): Promise<PaginatedSubjectsResponse> {
-    try {
-      const { search, department, page = 1, limit = 10 } = query;
-
-      const currentPage = Math.max(1, Number(page));
-      const limitPerPage = Math.max(1, Number(limit));
-      const offset = (currentPage - 1) * limitPerPage;
-
-      logger.debug('Building where clause', { search, department });
-
-      const whereClause = subjectsRepository.buildWhereClause(
-        search as string | undefined,
-        department as string | undefined
-      );
-
-      const [data, total] = await Promise.all([
-        subjectsRepository.findMany(whereClause, limitPerPage, offset),
-        subjectsRepository.count(whereClause),
-      ]);
-
-      return {
-        data,
-        pagination: {
-          page: currentPage,
-          limit: limitPerPage,
-          total,
-          totalPages: Math.ceil(total / limitPerPage),
-        },
-      };
-    } catch (error) {
-      logger.error('Error fetching subjects', { error });
-      throw new AppError('Failed to fetch subjects', 500);
-    }
-  }
-
   async createSubject(dto: CreateSubjectDto) {
     try {
       logger.debug('Creating subject in repository', { dto });
@@ -55,8 +20,43 @@ class SubjectsService {
         throw error;
       }
 
-      logger.error('Error creating subject', { error, dto });
+      logger.error('Error creating subject', { dto, error });
       throw new AppError('Failed to create subject', 500);
+    }
+  }
+
+  async getSubjects(query: GetSubjectsQuery): Promise<PaginatedSubjectsResponse> {
+    try {
+      const { department, limit = 10, page = 1, search } = query;
+
+      const currentPage = Math.max(1, Number(page));
+      const limitPerPage = Math.max(1, Number(limit));
+      const offset = (currentPage - 1) * limitPerPage;
+
+      logger.debug('Building where clause', { department, search });
+
+      const whereClause = subjectsRepository.buildWhereClause(
+        search as string | undefined,
+        department as string | undefined
+      );
+
+      const [data, total] = await Promise.all([
+        subjectsRepository.findMany(whereClause, limitPerPage, offset),
+        subjectsRepository.count(whereClause),
+      ]);
+
+      return {
+        data,
+        pagination: {
+          limit: limitPerPage,
+          page: currentPage,
+          total,
+          totalPages: Math.ceil(total / limitPerPage),
+        },
+      };
+    } catch (error) {
+      logger.error('Error fetching subjects', { error });
+      throw new AppError('Failed to fetch subjects', 500);
     }
   }
 }

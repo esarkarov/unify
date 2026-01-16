@@ -1,9 +1,10 @@
+import cors from 'cors';
+import express from 'express';
+
 import subjectsRouter from '@/features/subjects/subjects.routes';
 import { logger } from '@/shared/logger';
 import { errorHandler } from '@/shared/middlewares/error.middleware';
 import { requestLogger } from '@/shared/middlewares/request-logger.middleware';
-import cors from 'cors';
-import express from 'express';
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -21,8 +22,8 @@ app.use(requestLogger);
 
 app.get('/', (req, res) => {
   res.status(200).json({
-    status: 'ok',
     message: 'Server is running!',
+    status: 'ok',
     timestamp: new Date().toISOString(),
   });
 });
@@ -44,7 +45,7 @@ process.on('uncaughtException', (error) => {
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Rejection', { reason, promise });
+  logger.error('Unhandled Rejection', { promise, reason });
   process.exit(1);
 });
 

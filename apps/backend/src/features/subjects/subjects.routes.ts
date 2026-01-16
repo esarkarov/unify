@@ -1,5 +1,7 @@
-import { validate } from '@/shared/middlewares/validation.middleware';
 import { Router } from 'express';
+
+import { validate } from '@/shared/middlewares/validation.middleware';
+
 import { subjectsController } from './subjects.controller';
 import { subjectsValidation } from './subjects.validation';
 

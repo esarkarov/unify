@@ -1,34 +1,34 @@
 import { Department } from '@/features/departments/departments.types';
 import { subjects } from '@/features/subjects/subjects.schema';
 
-export interface GetSubjectsQuery {
-  search?: string;
-  department?: string;
-  page?: string | number;
-  limit?: string | number;
-}
-
 export interface CreateSubjectDto {
-  departmentId: number;
-  name: string;
   code: string;
+  departmentId: number;
   description?: string;
+  name: string;
 }
 
-export interface PaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
+export interface GetSubjectsQuery {
+  department?: string;
+  limit?: number | string;
+  page?: number | string;
+  search?: string;
 }
-
-export type SubjectWithDepartment = Subject & {
-  department: Department | null;
-};
 
 export interface PaginatedSubjectsResponse {
   data: SubjectWithDepartment[];
   pagination: PaginationMeta;
 }
 
+export interface PaginationMeta {
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
+}
+
 export type Subject = typeof subjects.$inferSelect;
+
+export type SubjectWithDepartment = Subject & {
+  department: Department | null;
+};

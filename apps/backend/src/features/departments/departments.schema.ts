@@ -1,7 +1,8 @@
-import { subjects } from '@/features/subjects/subjects.schema';
-import { timestamps } from '@/shared/db/schema';
 import { integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm/relations';
+
+import { subjects } from '@/features/subjects/subjects.schema';
+import { timestamps } from '@/shared/db/schema';
 
 export const departments = pgTable('departments', {
   code: varchar('code', { length: 50 }).notNull().unique(),

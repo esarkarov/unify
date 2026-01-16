@@ -1,8 +1,9 @@
-import { logger } from '@/shared/logger';
 import { NextFunction, Request, Response } from 'express';
 import { z, ZodSchema } from 'zod';
 
-export const validate = (schema: { body?: ZodSchema; query?: ZodSchema; params?: ZodSchema }) => {
+import { logger } from '@/shared/logger';
+
+export const validate = (schema: { body?: ZodSchema; params?: ZodSchema; query?: ZodSchema }) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (schema.body) {
@@ -21,17 +22,17 @@ export const validate = (schema: { body?: ZodSchema; query?: ZodSchema; params?:
     } catch (error) {
       if (error instanceof z.ZodError) {
         logger.warn('Validation error', {
-          path: req.path,
-          method: req.method,
           errors: error.errors,
+          method: req.method,
+          path: req.path,
         });
 
         return res.status(400).json({
-          error: 'Validation failed',
           details: error.errors.map((err) => ({
             field: err.path.join('.'),
             message: err.message,
           })),
+          error: 'Validation failed',
         });
       }
 
