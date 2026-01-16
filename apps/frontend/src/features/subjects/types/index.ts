@@ -1,8 +1,12 @@
+import { Department } from '@/features/departments/types';
+
 export interface Subject {
   id: number;
-  name: string;
   code: string;
-  description: string;
-  department: string;
-  createdAt?: string;
+  name: string;
+  description?: string;
+  departmentId: number;
+  createdAt: string;
+  updatedAt: string;
+  department: Department | null;
 }

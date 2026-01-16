@@ -1,10 +1,11 @@
-import { Subject } from '@/features/subjects/types';
+import type { Subject } from '@/features/subjects/types';
 import { CreateButton } from '@/shared/components/refine-ui/buttons/create';
 import { ShowButton } from '@/shared/components/refine-ui/buttons/show';
 import { DataTable } from '@/shared/components/refine-ui/data-table/data-table';
 import { Breadcrumb } from '@/shared/components/refine-ui/layout/breadcrumb';
 import { ListView } from '@/shared/components/refine-ui/views/list-view';
 import { Badge } from '@/shared/components/ui/badge';
+import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { DEPARTMENT_OPTIONS } from '@/shared/constants';
@@ -49,17 +50,24 @@ const SubjectsListPage = () => {
         cell: ({ getValue }) => <span className="truncate line-clamp-2">{getValue<string>()}</span>,
       },
       {
-        id: 'details',
-        size: 140,
-        header: () => <p className="column-title">Details</p>,
+        id: 'actions',
+        size: 200,
+        header: () => <p className="column-title">Actions</p>,
         cell: ({ row }) => (
-          <ShowButton
-            resource="subjects"
-            recordItemId={row.original.id}
-            variant="outline"
-            size="sm">
-            View
-          </ShowButton>
+          <div className="flex gap-2">
+            <ShowButton
+              resource="subjects"
+              recordItemId={row.original.id}
+              variant="outline"
+              size="sm">
+              View
+            </ShowButton>
+            <Button
+              variant="destructive"
+              size="sm">
+              Delete
+            </Button>
+          </div>
         ),
       },
     ],
@@ -109,6 +117,32 @@ const SubjectsListPage = () => {
     },
   });
 
+  const { isLoading, isError, error } = subjectTable.refineCore.tableQuery;
+
+  if (isLoading) {
+    return (
+      <ListView>
+        <Breadcrumb />
+        <h1 className="page-title">Subjects</h1>
+        <div className="flex items-center justify-center p-8">
+          <p>Loading subjects...</p>
+        </div>
+      </ListView>
+    );
+  }
+
+  if (isError) {
+    return (
+      <ListView>
+        <Breadcrumb />
+        <h1 className="page-title">Subjects</h1>
+        <div className="flex items-center justify-center p-8 text-red-500">
+          <p>Error loading subjects: {error?.message}</p>
+        </div>
+      </ListView>
+    );
+  }
+
   return (
     <ListView>
       <Breadcrumb />
@@ -133,7 +167,7 @@ const SubjectsListPage = () => {
             <Select
               value={selectedDepartment}
               onValueChange={setSelectedDepartment}>
-              <SelectTrigger className="">
+              <SelectTrigger>
                 <SelectValue placeholder="Filter by department" />
               </SelectTrigger>
 
