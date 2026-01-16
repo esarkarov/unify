@@ -1,12 +1,11 @@
-import { Layout } from '@/components/refine-ui/layout/layout';
-import { Toaster } from '@/components/refine-ui/notification/toaster';
-import { useNotificationProvider } from '@/components/refine-ui/notification/use-notification-provider';
-import { ThemeProvider } from '@/components/refine-ui/theme/theme-provider';
-import DashboardPage from '@/pages/DashboardPage';
-import SubjectCreatePage from '@/pages/SubjectCreatePage';
-import SubjectsListPage from '@/pages/SubjectsListPage';
-import SubjectDetailsPage from '@/pages/SubjectDetailsPage';
-import { dataProvider } from '@/providers/data';
+import DashboardPage from '@/features/dashboard/pages/DashboardPage';
+import SubjectCreatePage from '@/features/subjects/pages/SubjectCreatePage';
+import SubjectDetailsPage from '@/features/subjects/pages/SubjectDetailsPage';
+import SubjectsListPage from '@/features/subjects/pages/SubjectsListPage';
+import { Layout } from '@/shared/components/refine-ui/layout/layout';
+import { Toaster } from '@/shared/components/refine-ui/notification/toaster';
+import { useNotificationProvider } from '@/shared/components/refine-ui/notification/use-notification-provider';
+import { ThemeProvider } from '@/shared/components/refine-ui/theme/theme-provider';
 import { Authenticated, Refine } from '@refinedev/core';
 import { DevtoolsPanel } from '@refinedev/devtools';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
@@ -21,7 +20,6 @@ function App() {
       <RefineKbarProvider>
         <ThemeProvider>
           <Refine
-            dataProvider={dataProvider}
             notificationProvider={useNotificationProvider()}
             routerProvider={routerProvider}
             options={{
