@@ -11,11 +11,11 @@ export const validate = (schema: { body?: ZodSchema; params?: ZodSchema; query?:
       }
 
       if (schema.query) {
-        req.query = await schema.query.parseAsync(req.query);
+        res.locals.validatedQuery = await schema.query.parseAsync(req.query);
       }
 
       if (schema.params) {
-        req.params = await schema.params.parseAsync(req.params);
+        res.locals.validatedParams = await schema.params.parseAsync(req.params);
       }
 
       next();
@@ -36,7 +36,10 @@ export const validate = (schema: { body?: ZodSchema; params?: ZodSchema; query?:
         });
       }
 
-      logger.error('Unexpected validation error', { error });
+      logger.error('Unexpected validation error', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
       return res.status(500).json({ error: 'Internal server error' });
     }
   };
