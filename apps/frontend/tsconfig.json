@@ -5,9 +5,6 @@
     "useDefineForClassFields": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "rootDir": "src",
-    "outDir": "./dist",
-    "baseUrl": ".",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -19,6 +16,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "rootDir": "src",
+    "outDir": "./dist",
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
