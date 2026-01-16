@@ -11,5 +11,5 @@ export default defineConfig({
   },
   dialect: 'postgresql',
   out: './drizzle',
-  schema: './src/db/schema/index.ts',
+  schema: '../shared/db/schema/index.ts',
 });

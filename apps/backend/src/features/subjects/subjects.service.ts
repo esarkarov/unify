@@ -1,0 +1,64 @@
+import { subjectsRepository } from '@/features/subjects/subjects.repository';
+import { CreateSubjectDto, GetSubjectsQuery, PaginatedSubjectsResponse } from '@/features/subjects/subjects.types';
+import { logger } from '@/shared/logger';
+import { AppError } from '@/shared/middlewares/error.middleware';
+
+class SubjectsService {
+  async getSubjects(query: GetSubjectsQuery): Promise<PaginatedSubjectsResponse> {
+    try {
+      const { search, department, page = 1, limit = 10 } = query;
+
+      const currentPage = Math.max(1, Number(page));
+      const limitPerPage = Math.max(1, Number(limit));
+      const offset = (currentPage - 1) * limitPerPage;
+
+      logger.debug('Building where clause', { search, department });
+
+      const whereClause = subjectsRepository.buildWhereClause(
+        search as string | undefined,
+        department as string | undefined
+      );
+
+      const [data, total] = await Promise.all([
+        subjectsRepository.findMany(whereClause, limitPerPage, offset),
+        subjectsRepository.count(whereClause),
+      ]);
+
+      return {
+        data,
+        pagination: {
+          page: currentPage,
+          limit: limitPerPage,
+          total,
+          totalPages: Math.ceil(total / limitPerPage),
+        },
+      };
+    } catch (error) {
+      logger.error('Error fetching subjects', { error });
+      throw new AppError('Failed to fetch subjects', 500);
+    }
+  }
+
+  async createSubject(dto: CreateSubjectDto) {
+    try {
+      logger.debug('Creating subject in repository', { dto });
+
+      const created = await subjectsRepository.create(dto);
+
+      if (!created) {
+        throw new AppError('Failed to create subject', 500);
+      }
+
+      return created;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+
+      logger.error('Error creating subject', { error, dto });
+      throw new AppError('Failed to create subject', 500);
+    }
+  }
+}
+
+export const subjectsService = new SubjectsService();
