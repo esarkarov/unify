@@ -11,11 +11,11 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 
     logger[logLevel]('HTTP Request', {
       duration: `${duration}ms`,
-      ip: req.ip,
+      ip: req.ip || req.socket.remoteAddress,
       method: req.method,
       path: req.path,
       statusCode: res.statusCode,
-      userAgent: req.get('user-agent'),
+      userAgent: req.get('user-agent') || 'unknown',
     });
   });
 

@@ -4,7 +4,7 @@ import { z, ZodSchema } from 'zod';
 import { logger } from '@/shared/logger';
 
 export const validate = (schema: { body?: ZodSchema; params?: ZodSchema; query?: ZodSchema }) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (schema.body) {
         req.body = await schema.body.parseAsync(req.body);
@@ -27,20 +27,21 @@ export const validate = (schema: { body?: ZodSchema; params?: ZodSchema; query?:
           path: req.path,
         });
 
-        return res.status(400).json({
+        res.status(400).json({
           details: error.errors.map((err) => ({
+            code: err.code,
             field: err.path.join('.'),
             message: err.message,
           })),
           error: 'Validation failed',
         });
+        return;
       }
 
-      logger.error('Unexpected validation error', {
-        error: error instanceof Error ? error.message : String(error),
-        stack: error instanceof Error ? error.stack : undefined,
+      logger.error('Unexpected validation error', { error });
+      res.status(500).json({
+        error: 'Internal server error',
       });
-      return res.status(500).json({ error: 'Internal server error' });
     }
   };
 };
