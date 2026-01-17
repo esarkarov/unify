@@ -31,6 +31,8 @@ const SubjectCreatePage = () => {
   });
 
   const {
+    refineCore: { onFinish },
+    handleSubmit,
     formState: { isSubmitting },
     control,
   } = form;
@@ -41,6 +43,14 @@ const SubjectCreatePage = () => {
       pageSize: 100,
     },
   });
+
+  const onSubmit = async (values: SubjectFormValues) => {
+    try {
+      await onFinish(values);
+    } catch (error) {
+      console.error('Error creating subject:', error);
+    }
+  };
 
   const departments = departmentsQuery.data?.data ?? [];
   const isLoading = departmentsQuery.isLoading;
@@ -67,7 +77,9 @@ const SubjectCreatePage = () => {
 
           <CardContent className="mt-7">
             <Form {...form}>
-              <form className="space-y-5">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-5">
                 <FormField
                   control={control}
                   name="departmentId"
