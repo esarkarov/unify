@@ -28,9 +28,19 @@ const DepartmentCreatePage = () => {
   });
 
   const {
+    refineCore: { onFinish },
+    handleSubmit,
     formState: { isSubmitting },
     control,
   } = form;
+
+  const onSubmit = async (values: DepartmentFormValues) => {
+    try {
+      await onFinish(values);
+    } catch (error) {
+      console.error('Error creating department:', error);
+    }
+  };
 
   return (
     <CreateView className="class-view">
@@ -54,7 +64,9 @@ const DepartmentCreatePage = () => {
 
           <CardContent className="mt-7">
             <Form {...form}>
-              <form className="space-y-5">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="space-y-5">
                 <FormField
                   control={control}
                   name="code"
