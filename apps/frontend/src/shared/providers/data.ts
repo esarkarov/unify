@@ -1,40 +1,79 @@
 import { BACKEND_API_URL } from '@/shared/constants';
+import { buildFilterParams, buildPaginationParams, parseJsonResponse } from '@/shared/providers/helpers';
 import { createDataProvider, CreateDataProviderOptions } from '@refinedev/rest';
-
-export type ListResponse<T = unknown> = {
-  data?: T[];
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-};
-
-export type CreateResponse<T = unknown> = {
-  data?: T;
-};
-
-export type GetOneResponse<T = unknown> = {
-  data?: T;
-};
 
 const options: CreateDataProviderOptions = {
   getList: {
     getEndpoint: ({ resource }) => resource,
 
-    mapResponse: async (response) => {
-      const payload: ListResponse = await response.json();
-      return payload.data ?? [];
+    buildQueryParams: async ({ resource, pagination, filters = [] }) => ({
+      ...buildPaginationParams(pagination),
+      ...buildFilterParams(resource, filters),
+    }),
+
+    mapResponse: async <T>(response: Response): Promise<T[]> => {
+      const payload = await parseJsonResponse<T[]>(response);
+      return (payload.data ?? []) as T[];
     },
 
-    getTotalCount: async (response) => {
-      const payload: ListResponse = await response.json();
+    getTotalCount: async (response: Response): Promise<number> => {
+      const payload = await parseJsonResponse<unknown[]>(response);
       return payload.pagination?.total ?? payload.data?.length ?? 0;
+    },
+  },
+
+  create: {
+    getEndpoint: ({ resource }) => resource,
+
+    buildBodyParams: async ({ variables }) => variables,
+
+    mapResponse: async <T>(response: Response): Promise<T> => {
+      const payload = await parseJsonResponse<T>(response);
+      return (payload.data ?? {}) as T;
+    },
+  },
+
+  update: {
+    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+
+    buildBodyParams: async ({ variables }) => variables,
+
+    mapResponse: async <T>(response: Response): Promise<T> => {
+      const payload = await parseJsonResponse<T>(response);
+      return (payload.data ?? {}) as T;
+    },
+  },
+
+  deleteOne: {
+    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+
+    mapResponse: async <T>(response: Response): Promise<T> => {
+      const payload = await parseJsonResponse<T>(response);
+      return (payload.data ?? {}) as T;
+    },
+  },
+
+  getOne: {
+    getEndpoint: ({ resource, id }) => `${resource}/${id}`,
+
+    mapResponse: async <T>(response: Response): Promise<T> => {
+      const payload = await parseJsonResponse<T>(response);
+      return (payload.data ?? {}) as T;
+    },
+  },
+
+  getMany: {
+    getEndpoint: ({ resource }) => resource,
+
+    buildQueryParams: async ({ ids }) => ({
+      ids: ids.join(','),
+    }),
+
+    mapResponse: async <T>(response: Response): Promise<T[]> => {
+      const payload = await parseJsonResponse<T[]>(response);
+      return (payload.data ?? []) as T[];
     },
   },
 };
 
-const { dataProvider } = createDataProvider(BACKEND_API_URL, options);
-
-export { dataProvider };
+export const { dataProvider } = createDataProvider(BACKEND_API_URL, options);

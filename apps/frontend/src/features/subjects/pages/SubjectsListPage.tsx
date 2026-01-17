@@ -1,3 +1,4 @@
+import { DEPARTMENT_OPTIONS } from '@/features/subjects/constants';
 import type { Subject } from '@/features/subjects/types';
 import { CreateButton } from '@/shared/components/refine-ui/buttons/create';
 import { ShowButton } from '@/shared/components/refine-ui/buttons/show';
@@ -7,7 +8,6 @@ import { ListView } from '@/shared/components/refine-ui/views/list-view';
 import { Badge } from '@/shared/components/ui/badge';
 import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
-import { DEPARTMENT_OPTIONS } from '@/shared/constants';
 import { useTable } from '@refinedev/react-table';
 import { ColumnDef } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
