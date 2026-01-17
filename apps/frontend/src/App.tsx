@@ -1,4 +1,7 @@
 import DashboardPage from '@/features/dashboard/pages/DashboardPage';
+import DepartmentCreatePage from '@/features/departments/pages/DepartmentCreatePage';
+import DepartmentDetailsPage from '@/features/departments/pages/DepartmentDetailsPage';
+import DepartmentsListPage from '@/features/departments/pages/DepartmentsListPage';
 import SubjectCreatePage from '@/features/subjects/pages/SubjectCreatePage';
 import SubjectDetailsPage from '@/features/subjects/pages/SubjectDetailsPage';
 import SubjectsListPage from '@/features/subjects/pages/SubjectsListPage';
@@ -12,7 +15,7 @@ import { DevtoolsPanel } from '@refinedev/devtools';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import routerProvider, { DocumentTitleHandler, UnsavedChangesNotifier } from '@refinedev/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BookOpen, Home } from 'lucide-react';
+import { BookOpen, Building2, Home } from 'lucide-react';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router';
 import './App.css';
 
@@ -60,11 +63,18 @@ function App() {
                   name: 'subjects',
                   list: '/subjects',
                   create: '/subjects/create',
-                  show: '/subjects/show/:id',
-                  edit: '/subjects/edit/:id',
                   meta: {
                     label: 'Subjects',
                     icon: <BookOpen />,
+                  },
+                },
+                {
+                  name: 'departments',
+                  list: '/departments',
+                  create: '/departments/create',
+                  meta: {
+                    label: 'Departments',
+                    icon: <Building2 />,
                   },
                 },
               ]}>
@@ -94,6 +104,20 @@ function App() {
                     <Route
                       path="show/:id"
                       element={<SubjectDetailsPage />}
+                    />
+                  </Route>
+                  <Route path="departments">
+                    <Route
+                      index
+                      element={<DepartmentsListPage />}
+                    />
+                    <Route
+                      path="create"
+                      element={<DepartmentCreatePage />}
+                    />
+                    <Route
+                      path="show/:id"
+                      element={<DepartmentDetailsPage />}
                     />
                   </Route>
                 </Route>
