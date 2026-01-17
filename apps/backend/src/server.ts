@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express from 'express';
 
+import departmentsRouter from '@/features/departments/departments.routes';
 import subjectsRouter from '@/features/subjects/subjects.routes';
 import { logger } from '@/shared/logger';
 import { errorHandler } from '@/shared/middlewares/error.middleware';
@@ -30,6 +31,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/subjects', subjectsRouter);
+app.use('/api/departments', departmentsRouter);
 
 app.use(errorHandler);
 

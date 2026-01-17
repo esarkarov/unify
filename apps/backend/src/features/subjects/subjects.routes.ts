@@ -1,9 +1,8 @@
 import { Router } from 'express';
 
+import { subjectsController } from '@/features/subjects/subjects.controller';
+import { subjectsValidation } from '@/features/subjects/subjects.validation';
 import { validate } from '@/shared/middlewares/validation.middleware';
-
-import { subjectsController } from './subjects.controller';
-import { subjectsValidation } from './subjects.validation';
 
 const router = Router();
 
