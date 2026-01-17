@@ -1,3 +1,4 @@
+import { Department } from '@/features/departments/types';
 import { subjectCreateSchema, SubjectFormValues } from '@/features/subjects/validation';
 import { Breadcrumb } from '@/shared/components/refine-ui/layout/breadcrumb';
 import { CreateView } from '@/shared/components/refine-ui/views/create-view';
@@ -5,11 +6,11 @@ import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form';
 import { Input } from '@/shared/components/ui/input';
-import { Select, SelectContent, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Separator } from '@/shared/components/ui/separator';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useBack, type BaseRecord, type HttpError } from '@refinedev/core';
+import { useBack, useList, type BaseRecord, type HttpError } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
 
 const SubjectCreatePage = () => {
@@ -30,19 +31,19 @@ const SubjectCreatePage = () => {
   });
 
   const {
-    refineCore: { onFinish },
-    handleSubmit,
     formState: { isSubmitting },
     control,
   } = form;
 
-  const onSubmit = async (values: SubjectFormValues) => {
-    try {
-      await onFinish(values);
-    } catch (error) {
-      console.error('Error creating subject:', error);
-    }
-  };
+  const { query: departmentsQuery } = useList<Department>({
+    resource: 'departments',
+    pagination: {
+      pageSize: 100,
+    },
+  });
+
+  const departments = departmentsQuery.data?.data ?? [];
+  const isLoading = departmentsQuery.isLoading;
 
   return (
     <CreateView className="class-view">
@@ -66,9 +67,7 @@ const SubjectCreatePage = () => {
 
           <CardContent className="mt-7">
             <Form {...form}>
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="space-y-5">
+              <form className="space-y-5">
                 <FormField
                   control={control}
                   name="departmentId"
@@ -79,13 +78,22 @@ const SubjectCreatePage = () => {
                       </FormLabel>
                       <Select
                         onValueChange={(value) => field.onChange(Number(value))}
-                        value={field.value ? String(field.value) : ''}>
+                        value={field.value ? String(field.value) : ''}
+                        disabled={isLoading}>
                         <FormControl>
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select a department" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent></SelectContent>
+                        <SelectContent>
+                          {departments.map((department) => (
+                            <SelectItem
+                              key={department.id}
+                              value={String(department.id)}>
+                              {department.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>

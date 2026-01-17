@@ -5,7 +5,6 @@ import { DataTable } from '@/shared/components/refine-ui/data-table/data-table';
 import { Breadcrumb } from '@/shared/components/refine-ui/layout/breadcrumb';
 import { ListView } from '@/shared/components/refine-ui/views/list-view';
 import { Badge } from '@/shared/components/ui/badge';
-import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { DEPARTMENT_OPTIONS } from '@/shared/constants';
@@ -23,7 +22,7 @@ const SubjectsListPage = () => {
       {
         id: 'code',
         accessorKey: 'code',
-        size: 100,
+        size: 80,
         header: () => <p className="column-title ml-2">Code</p>,
         cell: ({ getValue }) => <Badge>{getValue<string>()}</Badge>,
       },
@@ -51,7 +50,7 @@ const SubjectsListPage = () => {
       },
       {
         id: 'actions',
-        size: 200,
+        size: 150,
         header: () => <p className="column-title">Actions</p>,
         cell: ({ row }) => (
           <div className="flex gap-2">
@@ -62,11 +61,6 @@ const SubjectsListPage = () => {
               size="sm">
               View
             </ShowButton>
-            <Button
-              variant="destructive"
-              size="sm">
-              Delete
-            </Button>
           </div>
         ),
       },
