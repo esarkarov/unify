@@ -1,31 +1,44 @@
+import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
+import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
 
 import departmentsRouter from '@/features/departments/departments.routes';
 import subjectsRouter from '@/features/subjects/subjects.routes';
+import { corsConfig } from '@/shared/config/cors.config';
+import { helmetConfig } from '@/shared/config/helmet.config';
+import { apiRateLimiter, globalRateLimiter } from '@/shared/config/security.config';
 import { swaggerSpec } from '@/shared/config/swagger.config';
 import { logger } from '@/shared/logger';
 import { errorHandler } from '@/shared/middlewares/error.middleware';
-import { notFoundHandler } from '@/shared/middlewares/not-found.middleware';
 import { requestLogger } from '@/shared/middlewares/request-logger.middleware';
+import { securityMiddleware } from '@/shared/middlewares/security.middleware';
 
 const app = express();
 const PORT = process.env.PORT;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.set('trust proxy', 1);
 
-app.use(
-  cors({
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    origin: process.env.FRONTEND_URL || '*',
-  })
-);
-
+app.use(helmet(helmetConfig));
+app.use(cors(corsConfig));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(compression());
+app.use(securityMiddleware);
+app.use(globalRateLimiter);
 app.use(requestLogger);
 
+/**
+ * @openapi
+ * /:
+ *   get:
+ *     summary: Health check
+ *     description: Check if the API is running
+ *     responses:
+ *       200:
+ *         description: API is running
+ */
 app.get('/', (req, res) => {
   res.status(200).json({
     message: 'Server is running!',
@@ -48,18 +61,23 @@ app.get('/api-docs.json', (req, res) => {
   res.send(swaggerSpec);
 });
 
+app.use('/api', apiRateLimiter);
 app.use('/api/subjects', subjectsRouter);
 app.use('/api/departments', departmentsRouter);
-app.use(notFoundHandler);
+
 app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
-  logger.info(`Server started successfully`, {
-    docsUrl: `http://localhost:${PORT}/api-docs`,
+  logger.info('Server started successfully', {
     environment: process.env.NODE_ENV || 'development',
     nodeVersion: process.version,
     port: PORT,
   });
+
+  console.log(`
+    Server running on port ${PORT}
+    API Docs: http://localhost:${PORT}/api-docs
+  `);
 });
 
 const gracefulShutdown = (signal: string) => {
@@ -80,18 +98,12 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 process.on('uncaughtException', (error: Error) => {
-  logger.error('Uncaught Exception - shutting down', {
-    error: error.message,
-    stack: error.stack,
-  });
+  logger.error('Uncaught Exception', { error: error.message, stack: error.stack });
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason: unknown, promise: Promise<unknown>) => {
-  logger.error('Unhandled Rejection - shutting down', {
-    promise,
-    reason,
-  });
+process.on('unhandledRejection', (reason: unknown) => {
+  logger.error('Unhandled Rejection', { reason });
   process.exit(1);
 });
 
