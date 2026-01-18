@@ -15,9 +15,12 @@ import { DevtoolsPanel } from '@refinedev/devtools';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import routerProvider, { DocumentTitleHandler, UnsavedChangesNotifier } from '@refinedev/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BookOpen, Building2, Home } from 'lucide-react';
+import { BookOpen, Building2, GraduationCap, Home } from 'lucide-react';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router';
 import './App.css';
+import ClassCreatePage from './features/classes/pages/ClassCreatePage';
+import ClassesListPage from './features/classes/pages/ClassesListPage';
+import ClassDetailsPage from './features/classes/pages/ClassDetailsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,6 +66,7 @@ function App() {
                   name: 'subjects',
                   list: '/subjects',
                   create: '/subjects/create',
+                  show: '/subjects/show/:id',
                   meta: {
                     label: 'Subjects',
                     icon: <BookOpen />,
@@ -71,10 +75,21 @@ function App() {
                 {
                   name: 'departments',
                   list: '/departments',
+                  show: '/departments/show/:id',
                   create: '/departments/create',
                   meta: {
                     label: 'Departments',
                     icon: <Building2 />,
+                  },
+                },
+                {
+                  name: 'classes',
+                  list: '/classes',
+                  create: '/classes/create',
+                  show: '/classes/show/:id',
+                  meta: {
+                    label: 'Classes',
+                    icon: <GraduationCap />,
                   },
                 },
               ]}>
@@ -118,6 +133,21 @@ function App() {
                     <Route
                       path="show/:id"
                       element={<DepartmentDetailsPage />}
+                    />
+                  </Route>
+
+                  <Route path="classes">
+                    <Route
+                      index
+                      element={<ClassesListPage />}
+                    />
+                    <Route
+                      path="create"
+                      element={<ClassCreatePage />}
+                    />
+                    <Route
+                      path="show/:id"
+                      element={<ClassDetailsPage />}
                     />
                   </Route>
                 </Route>

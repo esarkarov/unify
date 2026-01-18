@@ -29,7 +29,7 @@ export interface UploadWidgetProps {
   'aria-describedby'?: string;
 }
 
-function UploadWidget({
+export function UploadWidget({
   value = null,
   onChange,
   disabled = false,
@@ -134,5 +134,3 @@ function UploadWidget({
     </div>
   );
 }
-
-export default UploadWidget;
