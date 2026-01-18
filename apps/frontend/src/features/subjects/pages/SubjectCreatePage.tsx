@@ -1,17 +1,17 @@
 import { Department } from '@/features/departments/types';
+import { SubjectForm } from '@/features/subjects/components/organisms/SubjectForm';
+import { DEFAULT_VALUES, DEPARTMENTS_PAGE_SIZE } from '@/features/subjects/constants';
 import { subjectCreateSchema, SubjectFormValues } from '@/features/subjects/validation';
 import { Breadcrumb } from '@/shared/components/refine-ui/layout/breadcrumb';
 import { CreateView } from '@/shared/components/refine-ui/views/create-view';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form';
-import { Input } from '@/shared/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Separator } from '@/shared/components/ui/separator';
-import { Textarea } from '@/shared/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useBack, useList, type BaseRecord, type HttpError } from '@refinedev/core';
 import { useForm } from '@refinedev/react-hook-form';
+import { ChevronLeft } from 'lucide-react';
+import { useCallback } from 'react';
 
 const SubjectCreatePage = () => {
   const back = useBack();
@@ -22,35 +22,31 @@ const SubjectCreatePage = () => {
       resource: 'subjects',
       action: 'create',
     },
-    defaultValues: {
-      departmentId: 0,
-      name: '',
-      code: '',
-      description: '',
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
   const {
     refineCore: { onFinish },
-    handleSubmit,
     formState: { isSubmitting },
-    control,
   } = form;
 
   const { query: departmentsQuery } = useList<Department>({
     resource: 'departments',
     pagination: {
-      pageSize: 100,
+      pageSize: DEPARTMENTS_PAGE_SIZE,
     },
   });
 
-  const onSubmit = async (values: SubjectFormValues) => {
-    try {
-      await onFinish(values);
-    } catch (error) {
-      console.error('Error creating subject:', error);
-    }
-  };
+  const onSubmit = useCallback(
+    async (values: SubjectFormValues) => {
+      try {
+        await onFinish(values);
+      } catch (error) {
+        console.error('Error creating subject:', error);
+      }
+    },
+    [onFinish]
+  );
 
   const departments = departmentsQuery.data?.data ?? [];
   const isLoading = departmentsQuery.isLoading;
@@ -60,127 +56,36 @@ const SubjectCreatePage = () => {
       <Breadcrumb />
 
       <h1 className="page-title">Create a Subject</h1>
+
       <div className="intro-row">
-        <p>Provide the required information below to add a subject.</p>
-        <Button onClick={() => back()}>Go Back</Button>
+        <p className="text-muted-foreground">Provide the required information below to add a subject.</p>
+        <Button
+          onClick={back}
+          variant="outline">
+          <ChevronLeft />
+        </Button>
       </div>
 
-      <Separator />
+      <Separator className="my-2" />
 
-      <div className="my-4 flex items-center">
-        <Card className="class-form-card">
-          <CardHeader className="relative z-10">
-            <CardTitle className="text-2xl pb-0 font-bold text-gradient-orange">Fill out form</CardTitle>
-          </CardHeader>
+      <Card className="class-form-card">
+        <CardHeader className="relative z-10">
+          <CardTitle className="pb-0 text-2xl font-bold text-gradient-orange">Fill out form</CardTitle>
+        </CardHeader>
 
-          <Separator />
+        <Separator />
 
-          <CardContent className="mt-7">
-            <Form {...form}>
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="space-y-5">
-                <FormField
-                  control={control}
-                  name="departmentId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Department <span className="text-orange-600">*</span>
-                      </FormLabel>
-                      <Select
-                        onValueChange={(value) => field.onChange(Number(value))}
-                        value={field.value ? String(field.value) : ''}
-                        disabled={isLoading}>
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a department" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {departments.map((department) => (
-                            <SelectItem
-                              key={department.id}
-                              value={String(department.id)}>
-                              {department.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Subject Name <span className="text-orange-600">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Intro to Programming"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={control}
-                  name="code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Subject Code <span className="text-orange-600">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="CS101"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Description <span className="text-orange-600">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe the subject focus..."
-                          className="min-h-28"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <Button
-                  type="submit"
-                  size="lg"
-                  disabled={isSubmitting}>
-                  {isSubmitting ? 'Creating...' : 'Create Subject'}
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      </div>
+        <CardContent className="mt-7">
+          <SubjectForm
+            form={form}
+            onSubmit={onSubmit}
+            departments={departments}
+            isLoading={isLoading}
+            isSubmitting={isSubmitting}
+            submitLabel="Create Subject"
+          />
+        </CardContent>
+      </Card>
     </CreateView>
   );
 };

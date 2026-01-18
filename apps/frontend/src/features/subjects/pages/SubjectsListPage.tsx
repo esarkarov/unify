@@ -1,4 +1,4 @@
-import { DEPARTMENT_OPTIONS } from '@/features/subjects/constants';
+import { ALL_DEPARTMENTS, DEPARTMENT_OPTIONS } from '@/features/subjects/constants';
 import type { Subject } from '@/features/subjects/types';
 import { CreateButton } from '@/shared/components/refine-ui/buttons/create';
 import { ShowButton } from '@/shared/components/refine-ui/buttons/show';
@@ -8,95 +8,94 @@ import { ListView } from '@/shared/components/refine-ui/views/list-view';
 import { Badge } from '@/shared/components/ui/badge';
 import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
+import { PAGE_SIZE } from '@/shared/constants';
 import { useTable } from '@refinedev/react-table';
 import { ColumnDef } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
+const tableColumns: ColumnDef<Subject>[] = [
+  {
+    id: 'code',
+    accessorKey: 'code',
+    size: 100,
+    header: () => <span className="column-title ml-2">Code</span>,
+    cell: ({ getValue }) => <Badge>{getValue<string>()}</Badge>,
+  },
+  {
+    id: 'name',
+    accessorKey: 'name',
+    size: 200,
+    header: () => <span className="column-title">Name</span>,
+    cell: ({ getValue }) => <span className="text-foreground font-medium">{getValue<string>()}</span>,
+    filterFn: 'includesString',
+  },
+  {
+    id: 'department',
+    accessorKey: 'department.name',
+    size: 150,
+    header: () => <span className="column-title">Department</span>,
+    cell: ({ getValue }) => <Badge variant="secondary">{getValue<string>()}</Badge>,
+  },
+  {
+    id: 'description',
+    accessorKey: 'description',
+    size: 300,
+    header: () => <span className="column-title">Description</span>,
+    cell: ({ getValue }) => <span className="line-clamp-2 text-sm text-muted-foreground">{getValue<string>()}</span>,
+  },
+  {
+    id: 'actions',
+    size: 150,
+    header: () => <span className="column-title">Actions</span>,
+    cell: ({ row }) => (
+      <ShowButton
+        resource="subjects"
+        recordItemId={row.original.id}
+        variant="outline"
+        size="sm">
+        View
+      </ShowButton>
+    ),
+  },
+];
+
 const SubjectsListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
+  const [selectedDepartment, setSelectedDepartment] = useState<string>(ALL_DEPARTMENTS);
 
-  const subjectColumns = useMemo<ColumnDef<Subject>[]>(
-    () => [
-      {
-        id: 'code',
-        accessorKey: 'code',
-        size: 100,
-        header: () => <p className="column-title ml-2">Code</p>,
-        cell: ({ getValue }) => <Badge>{getValue<string>()}</Badge>,
-      },
-      {
-        id: 'name',
-        accessorKey: 'name',
-        size: 200,
-        header: () => <p className="column-title">Name</p>,
-        cell: ({ getValue }) => <span className="text-foreground">{getValue<string>()}</span>,
-        filterFn: 'includesString',
-      },
-      {
-        id: 'department',
-        accessorKey: 'department.name',
-        size: 150,
-        header: () => <p className="column-title">Department</p>,
-        cell: ({ getValue }) => <Badge variant="secondary">{getValue<string>()}</Badge>,
-      },
-      {
-        id: 'description',
-        accessorKey: 'description',
-        size: 300,
-        header: () => <p className="column-title">Description</p>,
-        cell: ({ getValue }) => <span className="truncate line-clamp-2">{getValue<string>()}</span>,
-      },
-      {
-        id: 'actions',
-        size: 150,
-        header: () => <p className="column-title">Actions</p>,
-        cell: ({ row }) => (
-          <ShowButton
-            resource="subjects"
-            recordItemId={row.original.id}
-            variant="outline"
-            size="sm">
-            View
-          </ShowButton>
-        ),
-      },
-    ],
-    []
-  );
+  const filters = useMemo(() => {
+    const filterList = [];
 
-  const departmentFilters =
-    selectedDepartment === 'all'
-      ? []
-      : [
-          {
-            field: 'department',
-            operator: 'eq' as const,
-            value: selectedDepartment,
-          },
-        ];
+    if (selectedDepartment !== ALL_DEPARTMENTS) {
+      filterList.push({
+        field: 'department',
+        operator: 'eq' as const,
+        value: selectedDepartment,
+      });
+    }
 
-  const searchFilters = searchQuery
-    ? [
-        {
-          field: 'name',
-          operator: 'contains' as const,
-          value: searchQuery,
-        },
-      ]
-    : [];
+    if (searchQuery.trim()) {
+      filterList.push({
+        field: 'name',
+        operator: 'contains' as const,
+        value: searchQuery.trim(),
+      });
+    }
 
-  const subjectTable = useTable<Subject>({
-    columns: subjectColumns,
+    return filterList;
+  }, [selectedDepartment, searchQuery]);
+
+  const table = useTable<Subject>({
+    columns: tableColumns,
     refineCoreProps: {
       resource: 'subjects',
       pagination: {
-        pageSize: 10,
+        pageSize: PAGE_SIZE,
         mode: 'server',
       },
       filters: {
-        permanent: [...departmentFilters, ...searchFilters],
+        permanent: filters,
       },
       sorters: {
         initial: [
@@ -109,15 +108,19 @@ const SubjectsListPage = () => {
     },
   });
 
-  const { isLoading, isError, error } = subjectTable.refineCore.tableQuery;
+  const { isLoading, isError, error } = table.refineCore.tableQuery;
 
   if (isLoading) {
     return (
       <ListView>
         <Breadcrumb />
         <h1 className="page-title">Subjects</h1>
-        <div className="flex items-center justify-center p-8">
-          <p>Loading subjects...</p>
+        <div
+          className="flex items-center justify-center p-8"
+          role="status">
+          <p className="text-muted-foreground">
+            Loading subjects...<span className="sr-only">Please wait</span>
+          </p>
         </div>
       </ListView>
     );
@@ -128,8 +131,12 @@ const SubjectsListPage = () => {
       <ListView>
         <Breadcrumb />
         <h1 className="page-title">Subjects</h1>
-        <div className="flex items-center justify-center p-8 text-red-500">
-          <p>Error loading subjects: {error?.message}</p>
+        <div className="flex items-center justify-center p-8">
+          <p
+            className="text-destructive"
+            role="alert">
+            Error loading subjects: {error?.message ?? 'Unknown error'}
+          </p>
         </div>
       </ListView>
     );
@@ -138,33 +145,38 @@ const SubjectsListPage = () => {
   return (
     <ListView>
       <Breadcrumb />
+
       <h1 className="page-title">Subjects</h1>
 
       <div className="intro-row">
-        <p>Quick access to essential metrics and management tools.</p>
+        <p className="text-muted-foreground">Quick access to essential metrics and management tools.</p>
 
         <div className="actions-row">
           <div className="search-field">
-            <Search className="search-icon" />
+            <Search
+              className="search-icon"
+              aria-hidden="true"
+            />
             <Input
-              type="text"
-              placeholder="Search by name..."
-              className="pl-10 w-full"
+              type="search"
+              placeholder="Search by name or code..."
+              className="w-full pl-10"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
+              aria-label="Search subjects by name or code"
             />
           </div>
 
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="flex w-full gap-2 sm:w-auto">
             <Select
               value={selectedDepartment}
               onValueChange={setSelectedDepartment}>
-              <SelectTrigger>
+              <SelectTrigger aria-label="Filter by department">
                 <SelectValue placeholder="Filter by department" />
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
+                <SelectItem value={ALL_DEPARTMENTS}>All Departments</SelectItem>
                 {DEPARTMENT_OPTIONS.map((department) => (
                   <SelectItem
                     key={department.value}
@@ -180,7 +192,7 @@ const SubjectsListPage = () => {
         </div>
       </div>
 
-      <DataTable table={subjectTable} />
+      <DataTable table={table} />
     </ListView>
   );
 };
