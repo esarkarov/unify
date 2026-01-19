@@ -1,6 +1,7 @@
-import { RESOURCE_FILTERS, SEARCHABLE_FIELDS } from '@/shared/providers/constants';
+import { RESOURCE_FILTERS, SEARCHABLE_FIELDS, STORAGE_KEY } from '@/shared/providers/constants';
 import { ApiResponse, QueryParams } from '@/shared/providers/types';
-import { CrudFilter } from '@refinedev/core';
+import { AuthActionResponse, CrudFilter } from '@refinedev/core';
+import { User } from 'better-auth/types';
 
 export const getFilterField = (filter: CrudFilter): string => {
   return 'field' in filter ? filter.field : '';
@@ -63,3 +64,35 @@ export const parseJsonResponse = async <T = unknown>(response: Response): Promis
     return {};
   }
 };
+
+export const getStoredUser = () => {
+  try {
+    const userJson = localStorage.getItem(STORAGE_KEY);
+    return userJson ? JSON.parse(userJson) : null;
+  } catch (error) {
+    console.error('Failed to parse stored user:', error);
+    return null;
+  }
+};
+
+export const storeUser = (user: User): void => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+  } catch (error) {
+    console.error('Failed to store user:', error);
+  }
+};
+
+export const removeUser = (): void => {
+  localStorage.removeItem(STORAGE_KEY);
+};
+
+export const createErrorResponse = (name: string, message: string): AuthActionResponse => ({
+  success: false,
+  error: { name, message },
+});
+
+export const createSuccessResponse = (redirectTo: string): AuthActionResponse => ({
+  success: true,
+  redirectTo,
+});

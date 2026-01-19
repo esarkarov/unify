@@ -1,3 +1,6 @@
+import ClassCreatePage from '@/features/classes/pages/ClassCreatePage';
+import ClassDetailsPage from '@/features/classes/pages/ClassDetailsPage';
+import ClassesListPage from '@/features/classes/pages/ClassesListPage';
 import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 import DepartmentCreatePage from '@/features/departments/pages/DepartmentCreatePage';
 import DepartmentDetailsPage from '@/features/departments/pages/DepartmentDetailsPage';
@@ -9,34 +12,16 @@ import { Layout } from '@/shared/components/refine-ui/layout/layout';
 import { Toaster } from '@/shared/components/refine-ui/notification/toaster';
 import { useNotificationProvider } from '@/shared/components/refine-ui/notification/use-notification-provider';
 import { ThemeProvider } from '@/shared/components/refine-ui/theme/theme-provider';
+import { queryClient } from '@/shared/lib/query-client';
 import { dataProvider } from '@/shared/providers/data';
 import { Authenticated, Refine } from '@refinedev/core';
 import { DevtoolsPanel } from '@refinedev/devtools';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
 import routerProvider, { DocumentTitleHandler, UnsavedChangesNotifier } from '@refinedev/react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { BookOpen, Building2, GraduationCap, Home } from 'lucide-react';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router';
 import './App.css';
-import ClassCreatePage from './features/classes/pages/ClassCreatePage';
-import ClassesListPage from './features/classes/pages/ClassesListPage';
-import ClassDetailsPage from './features/classes/pages/ClassDetailsPage';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 30 * 1000,
-      gcTime: 5 * 60 * 1000,
-      refetchOnWindowFocus: true,
-      refetchOnReconnect: true,
-      retry: 1,
-      refetchOnMount: true,
-    },
-    mutations: {
-      retry: 0,
-    },
-  },
-});
 
 function App() {
   return (

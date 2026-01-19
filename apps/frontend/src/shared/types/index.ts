@@ -1,3 +1,8 @@
+declare global {
+  interface Window {
+    cloudinary?: CloudinaryAPI;
+  }
+}
 export interface CloudinaryUploadInfo {
   secure_url: string;
   public_id: string;
@@ -43,8 +48,28 @@ export interface CloudinaryAPI {
   ) => CloudinaryWidget;
 }
 
-declare global {
-  interface Window {
-    cloudinary?: CloudinaryAPI;
-  }
+export enum UserRole {
+  STUDENT = 'student',
+  TEACHER = 'teacher',
+  ADMIN = 'admin',
+}
+
+export interface User {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  image?: string;
+  imageCldPubId?: string;
+  department?: string;
+}
+export interface SignUpPayload {
+  email: string;
+  name: string;
+  password: string;
+  image?: string;
+  imageCldPubId?: string;
+  role: UserRole;
 }
