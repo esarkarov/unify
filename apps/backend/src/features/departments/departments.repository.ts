@@ -8,7 +8,6 @@ import { subjects } from '@/features/subjects/subjects.schema';
 import { db } from '@/shared/db';
 import { user } from '@/shared/db/schema/auth.schema';
 import { logger } from '@/shared/logger';
-import { UserRoles } from '@/shared/types';
 
 class DepartmentsRepository {
   buildWhereClause(search?: string): SQL | undefined {
@@ -21,7 +20,6 @@ class DepartmentsRepository {
     const validConditions = conditions.filter((c): c is SQL => c !== undefined);
     return validConditions.length > 0 ? and(...validConditions) : undefined;
   }
-
   async count(whereClause: SQL | undefined): Promise<number> {
     try {
       logger.debug('Repository: Counting departments');
@@ -37,7 +35,6 @@ class DepartmentsRepository {
       throw error;
     }
   }
-
   async countClasses(departmentId: number): Promise<number> {
     try {
       logger.debug('Repository: Counting department classes', { departmentId });
@@ -54,7 +51,6 @@ class DepartmentsRepository {
       throw error;
     }
   }
-
   async countEnrolledStudents(departmentId: number): Promise<number> {
     try {
       logger.debug('Repository: Counting enrolled students', { departmentId });
@@ -73,7 +69,6 @@ class DepartmentsRepository {
       throw error;
     }
   }
-
   async countSubjects(departmentId: number): Promise<number> {
     try {
       logger.debug('Repository: Counting department subjects', { departmentId });
@@ -89,37 +84,6 @@ class DepartmentsRepository {
       throw error;
     }
   }
-
-  async countUsers(departmentId: number, role: UserRoles): Promise<number> {
-    try {
-      logger.debug('Repository: Counting department users', { departmentId, role });
-
-      if (role === 'teacher') {
-        const result = await db
-          .select({ count: sql<number>`count(distinct ${user.id})` })
-          .from(user)
-          .leftJoin(classes, eq(user.id, classes.teacherId))
-          .leftJoin(subjects, eq(classes.subjectId, subjects.id))
-          .where(and(eq(user.role, role), eq(subjects.departmentId, departmentId)));
-
-        return result[0]?.count ?? 0;
-      }
-
-      const result = await db
-        .select({ count: sql<number>`count(distinct ${user.id})` })
-        .from(user)
-        .leftJoin(enrollments, eq(user.id, enrollments.studentId))
-        .leftJoin(classes, eq(enrollments.classId, classes.id))
-        .leftJoin(subjects, eq(classes.subjectId, subjects.id))
-        .where(and(eq(user.role, role), eq(subjects.departmentId, departmentId)));
-
-      return result[0]?.count ?? 0;
-    } catch (error) {
-      logger.error('Repository error: countUsers', { departmentId, error, role });
-      throw error;
-    }
-  }
-
   async create(data: CreateDepartmentDto) {
     try {
       logger.debug('Repository: Creating department', { data });
@@ -132,7 +96,6 @@ class DepartmentsRepository {
       throw error;
     }
   }
-
   async findById(id: number) {
     try {
       logger.debug('Repository: Finding department by id', { id });
@@ -145,36 +108,6 @@ class DepartmentsRepository {
       throw error;
     }
   }
-
-  async findClasses(departmentId: number, limit: number, offset: number) {
-    try {
-      logger.debug('Repository: Finding department classes', { departmentId, limit, offset });
-
-      const classesList = await db
-        .select({
-          ...getTableColumns(classes),
-          subject: {
-            ...getTableColumns(subjects),
-          },
-          teacher: {
-            ...getTableColumns(user),
-          },
-        })
-        .from(classes)
-        .innerJoin(subjects, eq(classes.subjectId, subjects.id))
-        .innerJoin(user, eq(classes.teacherId, user.id))
-        .where(eq(subjects.departmentId, departmentId))
-        .orderBy(desc(classes.createdAt))
-        .limit(limit)
-        .offset(offset);
-
-      return classesList;
-    } catch (error) {
-      logger.error('Repository error: findClasses', { departmentId, error });
-      throw error;
-    }
-  }
-
   async findMany(whereClause: SQL | undefined, limit: number, offset: number): Promise<DepartmentWithStats[]> {
     try {
       logger.debug('Repository: Finding departments', { limit, offset });
@@ -195,85 +128,6 @@ class DepartmentsRepository {
       return results;
     } catch (error) {
       logger.error('Repository error: findMany', { error });
-      throw error;
-    }
-  }
-
-  async findSubjects(departmentId: number, limit: number, offset: number) {
-    try {
-      logger.debug('Repository: Finding department subjects', { departmentId, limit, offset });
-
-      const subjectsList = await db
-        .select({
-          ...getTableColumns(subjects),
-        })
-        .from(subjects)
-        .where(eq(subjects.departmentId, departmentId))
-        .orderBy(desc(subjects.createdAt))
-        .limit(limit)
-        .offset(offset);
-
-      return subjectsList;
-    } catch (error) {
-      logger.error('Repository error: findSubjects', { departmentId, error });
-      throw error;
-    }
-  }
-
-  async findUsers(departmentId: number, role: UserRoles, limit: number, offset: number) {
-    try {
-      logger.debug('Repository: Finding department users', { departmentId, limit, offset, role });
-
-      const baseSelect = {
-        createdAt: user.createdAt,
-        email: user.email,
-        emailVerified: user.emailVerified,
-        id: user.id,
-        image: user.image,
-        imageCldPubId: user.imageCldPubId,
-        name: user.name,
-        role: user.role,
-        updatedAt: user.updatedAt,
-      };
-
-      const groupByFields = [
-        user.id,
-        user.name,
-        user.email,
-        user.emailVerified,
-        user.image,
-        user.role,
-        user.imageCldPubId,
-        user.createdAt,
-        user.updatedAt,
-      ];
-
-      if (role === 'teacher') {
-        return await db
-          .select(baseSelect)
-          .from(user)
-          .leftJoin(classes, eq(user.id, classes.teacherId))
-          .leftJoin(subjects, eq(classes.subjectId, subjects.id))
-          .where(and(eq(user.role, role), eq(subjects.departmentId, departmentId)))
-          .groupBy(...groupByFields)
-          .orderBy(desc(user.createdAt))
-          .limit(limit)
-          .offset(offset);
-      }
-
-      return await db
-        .select(baseSelect)
-        .from(user)
-        .leftJoin(enrollments, eq(user.id, enrollments.studentId))
-        .leftJoin(classes, eq(enrollments.classId, classes.id))
-        .leftJoin(subjects, eq(classes.subjectId, subjects.id))
-        .where(and(eq(user.role, role), eq(subjects.departmentId, departmentId)))
-        .groupBy(...groupByFields)
-        .orderBy(desc(user.createdAt))
-        .limit(limit)
-        .offset(offset);
-    } catch (error) {
-      logger.error('Repository error: findUsers', { departmentId, error, role });
       throw error;
     }
   }
