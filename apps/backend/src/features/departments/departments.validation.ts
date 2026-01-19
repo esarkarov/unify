@@ -18,6 +18,17 @@ export const departmentParamsSchema = z.object({
   id: z.coerce.number().int().positive('Invalid department ID'),
 });
 
+export const paginationQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(100).default(10),
+  page: z.coerce.number().int().positive().default(1),
+});
+
+export const departmentUsersQuerySchema = paginationQuerySchema.extend({
+  role: z.enum(['teacher', 'student', 'admin'], {
+    errorMap: () => ({ message: 'Role must be either teacher, student, or admin' }),
+  }),
+});
+
 export const departmentsValidation = {
   createDepartment: {
     body: createDepartmentBodySchema,
@@ -31,8 +42,23 @@ export const departmentsValidation = {
     params: departmentParamsSchema,
   },
 
+  getDepartmentClasses: {
+    params: departmentParamsSchema,
+    query: paginationQuerySchema,
+  },
+
   getDepartments: {
     query: getDepartmentsQuerySchema,
+  },
+
+  getDepartmentSubjects: {
+    params: departmentParamsSchema,
+    query: paginationQuerySchema,
+  },
+
+  getDepartmentUsers: {
+    params: departmentParamsSchema,
+    query: departmentUsersQuerySchema,
   },
 
   updateDepartment: {
@@ -43,5 +69,7 @@ export const departmentsValidation = {
 
 export type CreateDepartmentBody = z.infer<typeof createDepartmentBodySchema>;
 export type DepartmentParams = z.infer<typeof departmentParamsSchema>;
+export type DepartmentUsersQuery = z.infer<typeof departmentUsersQuerySchema>;
 export type GetDepartmentsQuery = z.infer<typeof getDepartmentsQuerySchema>;
+export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
 export type UpdateDepartmentBody = z.infer<typeof updateDepartmentBodySchema>;

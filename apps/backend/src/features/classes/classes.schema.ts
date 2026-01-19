@@ -13,10 +13,8 @@ export const classes = pgTable(
   'classes',
   {
     bannerCldPubId: text('banner_cld_pub_id'),
-
     bannerUrl: text('banner_url'),
     capacity: integer('capacity').notNull().default(50),
-
     description: text('description'),
     id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
     inviteCode: varchar('invite_code', { length: 50 }).notNull().unique(),

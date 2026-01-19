@@ -29,7 +29,7 @@ export const getSubjectUsersQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).default(10),
   page: z.coerce.number().int().positive().default(1),
   role: z.enum(['teacher', 'student', 'admin'], {
-    errorMap: () => ({ message: 'Role must be either "teacher", "student", or "admin"' }),
+    errorMap: () => ({ message: 'Role must be either teacher, student, or admin' }),
   }),
 });
 
