@@ -1,3 +1,4 @@
+import { toNodeHandler } from 'better-auth/node';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
@@ -10,6 +11,7 @@ import { corsConfig } from '@/shared/config/cors.config';
 import { helmetConfig } from '@/shared/config/helmet.config';
 import { apiRateLimiter, globalRateLimiter } from '@/shared/config/security.config';
 import { swaggerSpec } from '@/shared/config/swagger.config';
+import { auth } from '@/shared/lib/auth';
 import { logger } from '@/shared/logger';
 import { errorHandler } from '@/shared/middlewares/error.middleware';
 import { requestLogger } from '@/shared/middlewares/request-logger.middleware';
@@ -22,6 +24,7 @@ app.set('trust proxy', 1);
 
 app.use(helmet(helmetConfig));
 app.use(cors(corsConfig));
+app.all('/api/auth/*splat', toNodeHandler(auth));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(compression());
