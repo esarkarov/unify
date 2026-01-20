@@ -1,38 +1,36 @@
+import z from 'zod';
+
 import { classes } from '@/features/classes/classes.schema';
 import { departments } from '@/features/departments/departments.schema';
+import {
+  createDepartmentBodySchema,
+  departmentUsersQuerySchema,
+  getDepartmentsQuerySchema,
+  paginationQuerySchema,
+} from '@/features/departments/departments.validation';
 import { subjects } from '@/features/subjects/subjects.schema';
 import { user } from '@/shared/db/schema/auth.schema';
-import { UserRoles } from '@/shared/types';
 
 export type Class = typeof classes.$inferSelect;
 
 export interface ClassWithRelations extends Class {
-  subject: Subject;
-  teacher: User;
+  subject: null | Subject;
+  teacher: null | User;
 }
 
-export interface CreateDepartmentDto {
-  code: string;
-  description?: string;
-  name: string;
-}
-
+export type CreateDepartmentDto = z.infer<typeof createDepartmentBodySchema>;
 export interface CreateDepartmentResponse {
   data: {
     id: number;
   };
 }
-
 export type Department = typeof departments.$inferSelect;
-
+export type DepartmentUsersQuery = z.infer<typeof departmentUsersQuerySchema>;
 export interface DepartmentWithStats extends Department {
   totalSubjects: number;
 }
 
-export interface GetDepartmentClassesParams {
-  limit?: number;
-  page?: number;
-}
+export type GetDepartmentClassesQuery = PaginationQuery;
 
 export interface GetDepartmentClassesResponse {
   data: ClassWithRelations[];
@@ -48,31 +46,21 @@ export interface GetDepartmentDetailsResponse {
   };
 }
 
-export interface GetDepartmentsParams {
-  limit?: number;
-  page?: number;
-  search?: string;
-}
+export type GetDepartmentsQuery = Partial<z.infer<typeof getDepartmentsQuerySchema>>;
 
 export interface GetDepartmentsResponse {
   data: DepartmentWithStats[];
   pagination: PaginationMeta;
 }
 
-export interface GetDepartmentSubjectsParams {
-  limit?: number;
-  page?: number;
-}
+export type GetDepartmentSubjectsQuery = PaginationQuery;
+
 export interface GetDepartmentSubjectsResponse {
   data: Subject[];
   pagination: PaginationMeta;
 }
 
-export interface GetDepartmentUsersParams {
-  limit?: number;
-  page?: number;
-  role: UserRoles;
-}
+export type GetDepartmentUsersQuery = Partial<z.infer<typeof departmentUsersQuerySchema>>;
 
 export interface GetDepartmentUsersResponse {
   data: User[];
@@ -85,6 +73,7 @@ export interface PaginationMeta {
   total: number;
   totalPages: number;
 }
+export type PaginationQuery = Partial<z.infer<typeof paginationQuerySchema>>;
 
 export type Subject = typeof subjects.$inferSelect;
 

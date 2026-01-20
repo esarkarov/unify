@@ -66,10 +66,3 @@ export const departmentsValidation = {
     params: departmentParamsSchema,
   },
 };
-
-export type CreateDepartmentBody = z.infer<typeof createDepartmentBodySchema>;
-export type DepartmentParams = z.infer<typeof departmentParamsSchema>;
-export type DepartmentUsersQuery = z.infer<typeof departmentUsersQuerySchema>;
-export type GetDepartmentsQuery = z.infer<typeof getDepartmentsQuerySchema>;
-export type PaginationQuery = z.infer<typeof paginationQuerySchema>;
-export type UpdateDepartmentBody = z.infer<typeof updateDepartmentBodySchema>;

@@ -1,11 +1,5 @@
 import { Department } from '@/features/departments/types';
 
-export type Status = 'active' | 'inactive' | 'pending' | 'completed' | 'cancelled';
-export interface Filter {
-  field: string;
-  operator: 'eq' | 'contains';
-  value: string;
-}
 export interface Subject {
   id: number;
   code: string;
@@ -45,4 +39,11 @@ export interface SubjectUser {
   email: string;
   role: string;
   image?: string | null;
+}
+
+export type Status = 'active' | 'inactive' | 'pending' | 'completed' | 'cancelled';
+export interface Filter {
+  field: string;
+  operator: 'eq' | 'contains';
+  value: string;
 }
