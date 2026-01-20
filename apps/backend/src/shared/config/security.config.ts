@@ -15,7 +15,7 @@ export const globalRateLimiter = rateLimit({
     });
   },
   legacyHeaders: false,
-  max: 100,
+  max: 200,
   message: { error: 'Too many requests, please try again later.' },
   standardHeaders: true,
   windowMs: 15 * 60 * 1000,
@@ -33,7 +33,7 @@ export const apiRateLimiter = rateLimit({
     });
   },
   legacyHeaders: false,
-  max: 50,
+  max: 150,
   message: { error: 'API rate limit exceeded, please try again later.' },
   standardHeaders: true,
   windowMs: 15 * 60 * 1000,

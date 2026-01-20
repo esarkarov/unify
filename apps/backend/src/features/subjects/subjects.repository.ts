@@ -2,10 +2,13 @@ import { and, desc, eq, getTableColumns, ilike, or, sql, SQL } from 'drizzle-orm
 
 import { classes } from '@/features/classes/classes.schema';
 import { departments } from '@/features/departments/departments.schema';
+import { enrollments } from '@/features/enrollments/enrollments.schema';
 import { subjects } from '@/features/subjects/subjects.schema';
 import { CreateSubjectDto, SubjectWithDepartment } from '@/features/subjects/subjects.types';
 import { db } from '@/shared/db';
+import { user } from '@/shared/db/schema/auth.schema';
 import { logger } from '@/shared/logger';
+import { UserRoles } from '@/shared/types';
 
 class SubjectsRepository {
   buildWhereClause(search?: string, department?: string): SQL | undefined {
@@ -53,6 +56,30 @@ class SubjectsRepository {
       throw error;
     }
   }
+  async countUsersBySubject(subjectId: number, role: UserRoles): Promise<number> {
+    try {
+      logger.debug('Repository: Counting users by subject', { role, subjectId });
+
+      const result =
+        role === 'teacher'
+          ? await db
+              .select({ count: sql<number>`count(distinct ${user.id})` })
+              .from(user)
+              .leftJoin(classes, eq(user.id, classes.teacherId))
+              .where(and(eq(user.role, role), eq(classes.subjectId, subjectId)))
+          : await db
+              .select({ count: sql<number>`count(distinct ${user.id})` })
+              .from(user)
+              .leftJoin(enrollments, eq(user.id, enrollments.studentId))
+              .leftJoin(classes, eq(enrollments.classId, classes.id))
+              .where(and(eq(user.role, role), eq(classes.subjectId, subjectId)));
+
+      return result[0]?.count ?? 0;
+    } catch (error) {
+      logger.error('Repository error: countUsersBySubject', { error, role, subjectId });
+      throw error;
+    }
+  }
   async create(data: CreateSubjectDto) {
     try {
       logger.debug('Repository: Creating subject', { data });
@@ -86,6 +113,30 @@ class SubjectsRepository {
       throw error;
     }
   }
+  async findClassesBySubject(subjectId: number, limit: number, offset: number) {
+    try {
+      logger.debug('Repository: Finding classes by subject', { limit, offset, subjectId });
+
+      const results = await db
+        .select({
+          ...getTableColumns(classes),
+          teacher: {
+            ...getTableColumns(user),
+          },
+        })
+        .from(classes)
+        .leftJoin(user, eq(classes.teacherId, user.id))
+        .where(eq(classes.subjectId, subjectId))
+        .orderBy(desc(classes.createdAt))
+        .limit(limit)
+        .offset(offset);
+
+      return results;
+    } catch (error) {
+      logger.error('Repository error: findClassesBySubject', { error, subjectId });
+      throw error;
+    }
+  }
   async findMany(whereClause: SQL | undefined, limit: number, offset: number): Promise<SubjectWithDepartment[]> {
     try {
       logger.debug('Repository: Finding subjects', { limit, offset });
@@ -107,6 +158,62 @@ class SubjectsRepository {
       return results;
     } catch (error) {
       logger.error('Repository error: findMany', { error });
+      throw error;
+    }
+  }
+  async findUsersBySubject(subjectId: number, role: UserRoles, limit: number, offset: number) {
+    try {
+      logger.debug('Repository: Finding users by subject', { limit, offset, role, subjectId });
+
+      const baseSelect = {
+        createdAt: user.createdAt,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        id: user.id,
+        image: user.image,
+        imageCldPubId: user.imageCldPubId,
+        name: user.name,
+        role: user.role,
+        updatedAt: user.updatedAt,
+      };
+
+      const groupByFields = [
+        user.id,
+        user.name,
+        user.email,
+        user.emailVerified,
+        user.image,
+        user.role,
+        user.imageCldPubId,
+        user.createdAt,
+        user.updatedAt,
+      ];
+
+      const results =
+        role === 'teacher'
+          ? await db
+              .select(baseSelect)
+              .from(user)
+              .leftJoin(classes, eq(user.id, classes.teacherId))
+              .where(and(eq(user.role, role), eq(classes.subjectId, subjectId)))
+              .groupBy(...groupByFields)
+              .orderBy(desc(user.createdAt))
+              .limit(limit)
+              .offset(offset)
+          : await db
+              .select(baseSelect)
+              .from(user)
+              .leftJoin(enrollments, eq(user.id, enrollments.studentId))
+              .leftJoin(classes, eq(enrollments.classId, classes.id))
+              .where(and(eq(user.role, role), eq(classes.subjectId, subjectId)))
+              .groupBy(...groupByFields)
+              .orderBy(desc(user.createdAt))
+              .limit(limit)
+              .offset(offset);
+
+      return results;
+    } catch (error) {
+      logger.error('Repository error: findUsersBySubject', { error, role, subjectId });
       throw error;
     }
   }

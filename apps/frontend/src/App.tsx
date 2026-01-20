@@ -60,8 +60,8 @@ function App() {
                 {
                   name: 'departments',
                   list: '/departments',
-                  show: '/departments/show/:id',
                   create: '/departments/create',
+                  show: '/departments/show/:id',
                   meta: {
                     label: 'Departments',
                     icon: <Building2 />,

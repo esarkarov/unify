@@ -15,7 +15,7 @@ export type GetSubjectClassesQuery = Partial<z.infer<typeof getSubjectClassesQue
 
 export type GetSubjectsQuery = Partial<z.infer<typeof getSubjectsQuerySchema>>;
 
-export type GetSubjectUsersQuery = z.infer<typeof getSubjectUsersQuerySchema>;
+export type GetSubjectUsersQuery = Partial<z.infer<typeof getSubjectUsersQuerySchema>>;
 export interface PaginatedSubjectsResponse {
   data: SubjectWithDepartment[];
   pagination: PaginationMeta;
