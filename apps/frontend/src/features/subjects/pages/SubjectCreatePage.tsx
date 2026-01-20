@@ -30,7 +30,9 @@ const SubjectCreatePage = () => {
     formState: { isSubmitting },
   } = form;
 
-  const { query: departmentsQuery } = useList<Department>({
+  const {
+    query: { data, isLoading },
+  } = useList<Department>({
     resource: 'departments',
     pagination: {
       pageSize: DEPARTMENTS_PAGE_SIZE,
@@ -48,8 +50,7 @@ const SubjectCreatePage = () => {
     [onFinish]
   );
 
-  const departments = departmentsQuery.data?.data ?? [];
-  const isLoading = departmentsQuery.isLoading;
+  const departments = data?.data ?? [];
 
   return (
     <CreateView className="class-view">

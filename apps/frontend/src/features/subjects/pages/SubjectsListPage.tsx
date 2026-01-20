@@ -1,64 +1,13 @@
 import { ALL_DEPARTMENTS, DEPARTMENT_OPTIONS } from '@/features/subjects/constants';
-import type { Subject } from '@/features/subjects/types';
 import { CreateButton } from '@/shared/components/refine-ui/buttons/create';
-import { ShowButton } from '@/shared/components/refine-ui/buttons/show';
 import { DataTable } from '@/shared/components/refine-ui/data-table/data-table';
 import { Breadcrumb } from '@/shared/components/refine-ui/layout/breadcrumb';
 import { ListView } from '@/shared/components/refine-ui/views/list-view';
-import { Badge } from '@/shared/components/ui/badge';
 import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
-import { PAGE_SIZE } from '@/shared/constants';
-import { useTable } from '@refinedev/react-table';
-import { ColumnDef } from '@tanstack/react-table';
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
-
-const tableColumns: ColumnDef<Subject>[] = [
-  {
-    id: 'code',
-    accessorKey: 'code',
-    size: 100,
-    header: () => <span className="column-title ml-2">Code</span>,
-    cell: ({ getValue }) => <Badge>{getValue<string>()}</Badge>,
-  },
-  {
-    id: 'name',
-    accessorKey: 'name',
-    size: 200,
-    header: () => <span className="column-title">Name</span>,
-    cell: ({ getValue }) => <span className="text-foreground font-medium">{getValue<string>()}</span>,
-    filterFn: 'includesString',
-  },
-  {
-    id: 'department',
-    accessorKey: 'department.name',
-    size: 150,
-    header: () => <span className="column-title">Department</span>,
-    cell: ({ getValue }) => <Badge variant="secondary">{getValue<string>()}</Badge>,
-  },
-  {
-    id: 'description',
-    accessorKey: 'description',
-    size: 300,
-    header: () => <span className="column-title">Description</span>,
-    cell: ({ getValue }) => <span className="line-clamp-2 text-sm text-muted-foreground">{getValue<string>()}</span>,
-  },
-  {
-    id: 'actions',
-    size: 150,
-    header: () => <span className="column-title">Actions</span>,
-    cell: ({ row }) => (
-      <ShowButton
-        resource="subjects"
-        recordItemId={row.original.id}
-        variant="outline"
-        size="sm">
-        View
-      </ShowButton>
-    ),
-  },
-];
+import { useSubjectTables } from '../hooks/use-subject-tables';
 
 const SubjectsListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -86,29 +35,11 @@ const SubjectsListPage = () => {
     return filterList;
   }, [selectedDepartment, searchQuery]);
 
-  const table = useTable<Subject>({
-    columns: tableColumns,
-    refineCoreProps: {
-      resource: 'subjects',
-      pagination: {
-        pageSize: PAGE_SIZE,
-        mode: 'server',
-      },
-      filters: {
-        permanent: filters,
-      },
-      sorters: {
-        initial: [
-          {
-            field: 'id',
-            order: 'desc',
-          },
-        ],
-      },
-    },
+  const { subjectsTable } = useSubjectTables({
+    filters,
   });
 
-  const { isLoading, isError, error } = table.refineCore.tableQuery;
+  const { isLoading, isError, error } = subjectsTable.refineCore.tableQuery;
 
   if (isLoading) {
     return (
@@ -192,7 +123,7 @@ const SubjectsListPage = () => {
         </div>
       </div>
 
-      <DataTable table={table} />
+      <DataTable table={subjectsTable} />
     </ListView>
   );
 };
