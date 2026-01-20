@@ -20,6 +20,19 @@ export const subjectParamsSchema = z.object({
   id: z.coerce.number().int().positive('Invalid subject ID'),
 });
 
+export const getSubjectClassesQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(100).default(10),
+  page: z.coerce.number().int().positive().default(1),
+});
+
+export const getSubjectUsersQuerySchema = z.object({
+  limit: z.coerce.number().int().positive().max(100).default(10),
+  page: z.coerce.number().int().positive().default(1),
+  role: z.enum(['teacher', 'student', 'admin'], {
+    errorMap: () => ({ message: 'Role must be either teacher, student, or admin' }),
+  }),
+});
+
 export const subjectsValidation = {
   createSubject: {
     body: createSubjectBodySchema,
@@ -33,8 +46,18 @@ export const subjectsValidation = {
     params: subjectParamsSchema,
   },
 
+  getSubjectClasses: {
+    params: subjectParamsSchema,
+    query: getSubjectClassesQuerySchema,
+  },
+
   getSubjects: {
     query: getSubjectsQuerySchema,
+  },
+
+  getSubjectUsers: {
+    params: subjectParamsSchema,
+    query: getSubjectUsersQuerySchema,
   },
 
   updateSubject: {
@@ -42,8 +65,3 @@ export const subjectsValidation = {
     params: subjectParamsSchema,
   },
 };
-
-export type CreateSubjectBody = z.infer<typeof createSubjectBodySchema>;
-export type GetSubjectsQuery = z.infer<typeof getSubjectsQuerySchema>;
-export type SubjectParams = z.infer<typeof subjectParamsSchema>;
-export type UpdateSubjectBody = z.infer<typeof updateSubjectBodySchema>;

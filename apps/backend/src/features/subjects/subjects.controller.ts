@@ -18,7 +18,32 @@ class SubjectsController {
 
     res.status(201).json({ data: createdSubject });
   });
+  getSubject = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const subjectId = Number(req.params.id);
 
+    logger.info('Fetching subject details', { subjectId });
+
+    const result = await subjectsService.getSubjectDetails(subjectId);
+
+    logger.info('Subject details fetched successfully', { subjectId });
+
+    res.status(200).json({ data: result });
+  });
+  getSubjectClasses = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const subjectId = Number(req.params.id);
+
+    logger.info('Fetching subject classes', { query: req.query, subjectId });
+
+    const result = await subjectsService.getSubjectClasses(subjectId, req.query);
+
+    logger.info('Subject classes fetched successfully', {
+      count: result.data.length,
+      subjectId,
+      total: result.pagination.total,
+    });
+
+    res.status(200).json(result);
+  });
   getSubjects = asyncHandler(async (req: Request, res: Response): Promise<void> => {
     logger.info('Fetching subjects', { query: req.query });
 
@@ -26,6 +51,22 @@ class SubjectsController {
 
     logger.info('Subjects fetched successfully', {
       count: result.data.length,
+      total: result.pagination.total,
+    });
+
+    res.status(200).json(result);
+  });
+  getSubjectUsers = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+    const subjectId = Number(req.params.id);
+
+    logger.info('Fetching subject users', { query: req.query, subjectId });
+
+    const result = await subjectsService.getSubjectUsers(subjectId, req.query);
+
+    logger.info('Subject users fetched successfully', {
+      count: result.data.length,
+      role: req.query.role,
+      subjectId,
       total: result.pagination.total,
     });
 

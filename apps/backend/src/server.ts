@@ -1,26 +1,47 @@
+import { toNodeHandler } from 'better-auth/node';
+import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
+import helmet from 'helmet';
+import swaggerUi from 'swagger-ui-express';
 
+import departmentsRouter from '@/features/departments/departments.routes';
 import subjectsRouter from '@/features/subjects/subjects.routes';
+import { corsConfig } from '@/shared/config/cors.config';
+import { helmetConfig } from '@/shared/config/helmet.config';
+import { apiRateLimiter, globalRateLimiter } from '@/shared/config/security.config';
+import { swaggerSpec } from '@/shared/config/swagger.config';
+import { auth } from '@/shared/lib/auth';
 import { logger } from '@/shared/logger';
 import { errorHandler } from '@/shared/middlewares/error.middleware';
 import { requestLogger } from '@/shared/middlewares/request-logger.middleware';
+import { securityMiddleware } from '@/shared/middlewares/security.middleware';
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT;
 
-app.use(
-  cors({
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    origin: process.env.FRONTEND_URL,
-  })
-);
+app.set('trust proxy', 1);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(helmet(helmetConfig));
+app.use(cors(corsConfig));
+app.all('/api/auth/*splat', toNodeHandler(auth));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(compression());
+app.use(securityMiddleware);
+app.use(globalRateLimiter);
 app.use(requestLogger);
 
+/**
+ * @openapi
+ * /:
+ *   get:
+ *     summary: Health check
+ *     description: Check if the API is running
+ *     responses:
+ *       200:
+ *         description: API is running
+ */
 app.get('/', (req, res) => {
   res.status(200).json({
     message: 'Server is running!',
@@ -29,24 +50,63 @@ app.get('/', (req, res) => {
   });
 });
 
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: 'University API Documentation',
+  })
+);
+
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+app.use('/api', apiRateLimiter);
 app.use('/api/subjects', subjectsRouter);
+app.use('/api/departments', departmentsRouter);
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  logger.info(`Server started on port ${PORT}`, {
+const server = app.listen(PORT, () => {
+  logger.info('Server started successfully', {
     environment: process.env.NODE_ENV || 'development',
+    nodeVersion: process.version,
     port: PORT,
   });
+
+  console.log(`
+    Server running on port ${PORT}
+    API Docs: http://localhost:${PORT}/api-docs
+  `);
 });
 
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught Exception', { error });
+const gracefulShutdown = (signal: string) => {
+  logger.info(`${signal} received, starting graceful shutdown`);
+
+  server.close(() => {
+    logger.info('Server closed successfully');
+    process.exit(0);
+  });
+
+  setTimeout(() => {
+    logger.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+process.on('uncaughtException', (error: Error) => {
+  logger.error('Uncaught Exception', { error: error.message, stack: error.stack });
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Rejection', { promise, reason });
+process.on('unhandledRejection', (reason: unknown) => {
+  logger.error('Unhandled Rejection', { reason });
   process.exit(1);
 });
 

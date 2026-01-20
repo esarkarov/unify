@@ -4,14 +4,15 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', '*.config.js', 'drizzle/**'],
+    ignores: ['dist/**', 'node_modules/**', 'eslint.config.js', 'drizzle/**'],
   },
+
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
     languageOptions: {
       parserOptions: {
-        project: './tsconfig.json',
+        project: '../../apps/backend/tsconfig.json',
         tsconfigRootDir: import.meta.dirname,
       },
     },

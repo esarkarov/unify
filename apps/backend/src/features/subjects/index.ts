@@ -1,2 +1,1 @@
-export { default as subjectsRouter } from './subjects.routes';
-
+export { default as subjectsRouter } from '@/features/subjects/subjects.routes';
