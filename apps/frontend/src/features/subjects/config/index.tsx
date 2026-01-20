@@ -1,6 +1,6 @@
 import { Subject, SubjectClass, SubjectUser } from '@/features/subjects/types';
-import { StatusBadge } from '@/features/subjects/components/atoms/StatusBadge';
-import { UserAvatarCell } from '@/features/subjects/components/molecules/UserAvatarCell';
+import { StatusBadge } from '@/shared/components/atoms/StatusBadge';
+import { UserAvatarCell } from '@/shared/components/molecules/UserAvatarCell';
 import { ShowButton } from '@/shared/components/refine-ui/buttons/show';
 import { Badge } from '@/shared/components/ui/badge';
 import { ColumnDef } from '@tanstack/react-table';
@@ -59,7 +59,6 @@ export const classTableColumns = (): ColumnDef<SubjectClass>[] => [
     ),
   },
 ];
-
 export const userTableColumns = (): ColumnDef<SubjectUser>[] => [
   {
     id: 'user',
@@ -102,7 +101,6 @@ export const userTableColumns = (): ColumnDef<SubjectUser>[] => [
     ),
   },
 ];
-
 export const subjectTableColumns = (): ColumnDef<Subject>[] => [
   {
     id: 'code',

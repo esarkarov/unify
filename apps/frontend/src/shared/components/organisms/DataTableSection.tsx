@@ -1,4 +1,4 @@
-import { InfoCard } from '@/features/subjects/components/organisms/InfoCard';
+import { InfoCard } from '@/shared/components/organisms/InfoCard';
 import { DataTable } from '@/shared/components/refine-ui/data-table/data-table';
 import { Badge } from '@/shared/components/ui/badge';
 import { BaseRecord, HttpError } from '@refinedev/core';

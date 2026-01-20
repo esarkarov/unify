@@ -1,6 +1,6 @@
 import { SIZE_CLASSES } from '@/features/subjects/constants';
-import { getInitials } from '@/features/subjects/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
+import { getInitials } from '@/shared/lib/utils';
 
 export interface UserAvatarCellProps {
   name: string;

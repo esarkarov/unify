@@ -1,5 +1,5 @@
-import { Status } from '@/features/subjects/types';
 import { SubjectFormValues } from '@/features/subjects/validation';
+import { Status } from '@/shared/types';
 
 export const DEPARTMENTS = [
   'Computer Science',

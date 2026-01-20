@@ -1,4 +1,4 @@
-import { InfoCard } from '@/features/subjects/components/organisms/InfoCard';
+import { InfoCard } from '@/shared/components/organisms/InfoCard';
 import { Badge } from '@/shared/components/ui/badge';
 
 interface SubjectOverviewSectionProps {

@@ -1,13 +1,12 @@
-import { useShow } from '@refinedev/core';
-import { useParams } from 'react-router';
-
-import { DataTableSection } from '@/features/subjects/components/organisms/DataTableSection';
 import { DepartmentSection } from '@/features/subjects/components/organisms/DepartmentSection';
 import { SubjectOverviewSection } from '@/features/subjects/components/organisms/SubjectOverviewSection';
 import { useSubjectTables } from '@/features/subjects/hooks/use-subject-tables';
 import { SubjectDetails } from '@/features/subjects/types';
 import { LoadingErrorState } from '@/shared/components/molecules/LoadingErrorState';
+import { DataTableSection } from '@/shared/components/organisms/DataTableSection';
 import { ShowView, ShowViewHeader } from '@/shared/components/refine-ui/views/show-view';
+import { useShow } from '@refinedev/core';
+import { useParams } from 'react-router';
 
 const SubjectDetailsPage = () => {
   const { id } = useParams();
@@ -66,12 +65,10 @@ const SubjectDetailsPage = () => {
         <DataTableSection
           title="Teachers"
           table={teachersTable}
-          count={totals.classes}
         />
         <DataTableSection
           title="Students"
           table={studentsTable}
-          count={totals.classes}
         />
       </div>
     </ShowView>

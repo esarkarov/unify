@@ -1,4 +1,5 @@
 import { ALL_DEPARTMENTS, DEPARTMENT_OPTIONS } from '@/features/subjects/constants';
+import { useSubjectTables } from '@/features/subjects/hooks/use-subject-tables';
 import { CreateButton } from '@/shared/components/refine-ui/buttons/create';
 import { DataTable } from '@/shared/components/refine-ui/data-table/data-table';
 import { Breadcrumb } from '@/shared/components/refine-ui/layout/breadcrumb';
@@ -7,7 +8,6 @@ import { Input } from '@/shared/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Search } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { useSubjectTables } from '../hooks/use-subject-tables';
 
 const SubjectsListPage = () => {
   const [searchQuery, setSearchQuery] = useState('');

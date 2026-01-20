@@ -40,10 +40,3 @@ export interface SubjectUser {
   role: string;
   image?: string | null;
 }
-
-export type Status = 'active' | 'inactive' | 'pending' | 'completed' | 'cancelled';
-export interface Filter {
-  field: string;
-  operator: 'eq' | 'contains';
-  value: string;
-}

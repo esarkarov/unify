@@ -73,3 +73,11 @@ export interface SignUpPayload {
   imageCldPubId?: string;
   role: UserRole;
 }
+
+export interface Filter {
+  field: string;
+  operator: 'eq' | 'contains';
+  value: string;
+}
+
+export type Status = 'active' | 'inactive' | 'pending' | 'completed' | 'cancelled';

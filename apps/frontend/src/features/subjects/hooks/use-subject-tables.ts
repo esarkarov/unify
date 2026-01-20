@@ -1,6 +1,7 @@
 import { classTableColumns, subjectTableColumns, userTableColumns } from '@/features/subjects/config';
-import { Filter, Subject, SubjectClass, SubjectUser } from '@/features/subjects/types';
+import { Subject, SubjectClass, SubjectUser } from '@/features/subjects/types';
 import { PAGE_SIZE } from '@/shared/constants';
+import { Filter } from '@/shared/types';
 import { useTable } from '@refinedev/react-table';
 import { useMemo } from 'react';
 

@@ -1,6 +1,6 @@
 import { STATUS_VARIANTS } from '@/features/subjects/constants';
-import { Status } from '@/features/subjects/types';
 import { Badge } from '@/shared/components/ui/badge';
+import { Status } from '@/shared/types';
 
 interface StatusBadgeProps {
   status: Status | string;

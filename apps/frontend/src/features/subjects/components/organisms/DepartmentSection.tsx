@@ -1,5 +1,5 @@
 import { Department } from '@/features/departments/types';
-import { InfoCard } from '@/features/subjects/components/organisms/InfoCard';
+import { InfoCard } from '@/shared/components/organisms/InfoCard';
 import { useLink } from '@refinedev/core';
 
 interface DepartmentSectionProps {
