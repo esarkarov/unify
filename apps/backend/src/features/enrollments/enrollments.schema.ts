@@ -16,7 +16,6 @@ export const enrollments = pgTable(
     studentId: text('student_id')
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
-
     ...timestamps,
   },
   (table) => ({

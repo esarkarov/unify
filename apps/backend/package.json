@@ -15,6 +15,7 @@
     "prettier:check": "prettier --check .",
     "db:generate": "drizzle-kit generate --config=./src/shared/config/drizzle.config.ts",
     "db:migrate": "drizzle-kit migrate --config=./src/shared/config/drizzle.config.ts",
+    "db:push": "drizzle-kit push --config=./src/shared/config/drizzle.config.ts",
     "db:seed": "tsx seed/seed.ts"
   },
   "devDependencies": {
@@ -40,7 +41,6 @@
     "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
     "helmet": "^8.1.0",
-    "pg": "^8.17.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",

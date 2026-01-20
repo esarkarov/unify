@@ -27,7 +27,6 @@ export const session = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id),
-
     ...timestamps,
   },
   (table) => ({
@@ -52,7 +51,6 @@ export const account = pgTable(
     userId: text('user_id')
       .notNull()
       .references(() => user.id),
-
     ...timestamps,
   },
   (table) => ({
@@ -68,7 +66,6 @@ export const verification = pgTable(
     id: text('id').primaryKey(),
     identifier: text('identifier').notNull(),
     value: text('value').notNull(),
-
     ...timestamps,
   },
   (table) => ({

@@ -27,7 +27,6 @@ export const classes = pgTable(
     teacherId: text('teacher_id')
       .notNull()
       .references(() => user.id, { onDelete: 'restrict' }),
-
     ...timestamps,
   },
   (table) => ({
