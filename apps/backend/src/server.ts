@@ -5,8 +5,9 @@ import express from 'express';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
 
-import departmentsRouter from '@/features/departments/departments.routes';
-import subjectsRouter from '@/features/subjects/subjects.routes';
+import { classesRouter } from '@/features/classes';
+import { departmentsRouter } from '@/features/departments';
+import { subjectsRouter } from '@/features/subjects';
 import { corsConfig } from '@/shared/config/cors.config';
 import { helmetConfig } from '@/shared/config/helmet.config';
 import { apiRateLimiter, globalRateLimiter } from '@/shared/config/security.config';
@@ -67,6 +68,7 @@ app.get('/api-docs.json', (req, res) => {
 app.use('/api', apiRateLimiter);
 app.use('/api/subjects', subjectsRouter);
 app.use('/api/departments', departmentsRouter);
+app.use('/api/classes', classesRouter);
 
 app.use(errorHandler);
 

@@ -24,8 +24,8 @@ export const paginationQuerySchema = z.object({
 });
 
 export const departmentUsersQuerySchema = paginationQuerySchema.extend({
-  role: z.enum(['teacher', 'student', 'admin'], {
-    errorMap: () => ({ message: 'Role must be either teacher, student, or admin' }),
+  role: z.enum(['teacher', 'student'], {
+    errorMap: () => ({ message: 'Role must be either teacher or student' }),
   }),
 });
 

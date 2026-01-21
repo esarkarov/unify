@@ -4,4 +4,4 @@ export interface Schedule {
   startTime: string;
 }
 
-export type UserRoles = 'admin' | 'student' | 'teacher';
+export type UserRoles = 'student' | 'teacher';
