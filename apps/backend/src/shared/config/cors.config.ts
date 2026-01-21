@@ -14,6 +14,6 @@ export const corsConfig: CorsOptions = {
   maxAge: 86400,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   optionsSuccessStatus: 204,
-  origin: process.env.FRONTEND_URL || true,
+  origin: process.env.FRONTEND_URL,
   preflightContinue: false,
 };

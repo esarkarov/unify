@@ -9,6 +9,7 @@ import { classesRouter } from '@/features/classes';
 import { departmentsRouter } from '@/features/departments';
 import { enrollmentsRouter } from '@/features/enrollments';
 import { subjectsRouter } from '@/features/subjects';
+import { usersRouter } from '@/features/users';
 import { corsConfig } from '@/shared/config/cors.config';
 import { helmetConfig } from '@/shared/config/helmet.config';
 import { apiRateLimiter, globalRateLimiter } from '@/shared/config/security.config';
@@ -70,6 +71,7 @@ app.use('/api', apiRateLimiter);
 app.use('/api/subjects', subjectsRouter);
 app.use('/api/departments', departmentsRouter);
 app.use('/api/classes', classesRouter);
+app.use('/api/users', usersRouter);
 app.use('/api/enrollments', enrollmentsRouter);
 
 app.use(errorHandler);
