@@ -7,6 +7,9 @@ import DashboardPage from '@/features/dashboard/pages/DashboardPage';
 import DepartmentCreatePage from '@/features/departments/pages/DepartmentCreatePage';
 import DepartmentDetailsPage from '@/features/departments/pages/DepartmentDetailsPage';
 import DepartmentsListPage from '@/features/departments/pages/DepartmentsListPage';
+import EnrollmentConfirmationPage from '@/features/enrollments/pages/EnrollmentConfirmationPage';
+import EnrollmentCreatePage from '@/features/enrollments/pages/EnrollmentCreatePage';
+import EnrollmentsJoinPage from '@/features/enrollments/pages/EnrollmentsJoinPage';
 import SubjectCreatePage from '@/features/subjects/pages/SubjectCreatePage';
 import SubjectDetailsPage from '@/features/subjects/pages/SubjectDetailsPage';
 import SubjectsListPage from '@/features/subjects/pages/SubjectsListPage';
@@ -26,7 +29,7 @@ import routerProvider, {
   UnsavedChangesNotifier,
 } from '@refinedev/react-router';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { BookOpen, Building2, GraduationCap, Home } from 'lucide-react';
+import { BookOpen, Building2, ClipboardCheck, GraduationCap, Home } from 'lucide-react';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router';
 import './App.css';
 
@@ -83,6 +86,15 @@ function App() {
                   meta: {
                     label: 'Classes',
                     icon: <GraduationCap />,
+                  },
+                },
+                {
+                  name: 'enrollments',
+                  list: '/enrollments/create',
+                  create: '/enrollments/create',
+                  meta: {
+                    label: 'Enrollments',
+                    icon: <ClipboardCheck />,
                   },
                 },
               ]}>
@@ -158,6 +170,21 @@ function App() {
                     <Route
                       path="show/:id"
                       element={<ClassDetailsPage />}
+                    />
+                  </Route>
+
+                  <Route path="enrollments">
+                    <Route
+                      path="create"
+                      element={<EnrollmentCreatePage />}
+                    />
+                    <Route
+                      path="join"
+                      element={<EnrollmentsJoinPage />}
+                    />
+                    <Route
+                      path="confirm"
+                      element={<EnrollmentConfirmationPage />}
                     />
                   </Route>
                 </Route>
