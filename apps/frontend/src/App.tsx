@@ -1,3 +1,5 @@
+import LoginPage from '@/features/auth/pages/LoginPage';
+import RegisterPage from '@/features/auth/pages/RegisterPage';
 import ClassCreatePage from '@/features/classes/pages/ClassCreatePage';
 import ClassDetailsPage from '@/features/classes/pages/ClassDetailsPage';
 import ClassesListPage from '@/features/classes/pages/ClassesListPage';
@@ -13,11 +15,16 @@ import { Toaster } from '@/shared/components/refine-ui/notification/toaster';
 import { useNotificationProvider } from '@/shared/components/refine-ui/notification/use-notification-provider';
 import { ThemeProvider } from '@/shared/components/refine-ui/theme/theme-provider';
 import { queryClient } from '@/shared/lib/query-client';
+import { authProvider } from '@/shared/providers/auth';
 import { dataProvider } from '@/shared/providers/data';
 import { Authenticated, Refine } from '@refinedev/core';
 import { DevtoolsPanel } from '@refinedev/devtools';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
-import routerProvider, { DocumentTitleHandler, UnsavedChangesNotifier } from '@refinedev/react-router';
+import routerProvider, {
+  DocumentTitleHandler,
+  NavigateToResource,
+  UnsavedChangesNotifier,
+} from '@refinedev/react-router';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { BookOpen, Building2, GraduationCap, Home } from 'lucide-react';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router';
@@ -31,6 +38,7 @@ function App() {
           <ThemeProvider>
             <Refine
               dataProvider={dataProvider}
+              authProvider={authProvider}
               notificationProvider={useNotificationProvider()}
               routerProvider={routerProvider}
               options={{
@@ -79,6 +87,23 @@ function App() {
                 },
               ]}>
               <Routes>
+                <Route
+                  element={
+                    <Authenticated
+                      key="public-routes"
+                      fallback={<Outlet />}>
+                      <NavigateToResource fallbackTo="/" />
+                    </Authenticated>
+                  }>
+                  <Route
+                    path="/login"
+                    element={<LoginPage />}
+                  />
+                  <Route
+                    path="/register"
+                    element={<RegisterPage />}
+                  />
+                </Route>
                 <Route
                   element={
                     <Authenticated key="private-routes">

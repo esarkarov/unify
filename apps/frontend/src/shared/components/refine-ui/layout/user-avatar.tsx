@@ -1,28 +1,21 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { cn } from '@/shared/lib/utils';
+import { User } from '@/shared/types';
 import { useGetIdentity } from '@refinedev/core';
-
-type User = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  email: string;
-  avatar?: string;
-};
 
 export function UserAvatar() {
   const { data: user, isLoading: userIsLoading } = useGetIdentity<User>();
 
   if (userIsLoading || !user) {
-    return <Skeleton className={cn('h-10', 'w-10', 'rounded-full')} />;
+    return <Skeleton className={cn('h-9', 'w-9', 'rounded-full')} />;
   }
 
-  const { fullName, avatar } = user;
+  const fullName = user.name;
+  const avatar = user.image;
 
   return (
-    <Avatar className={cn('h-10', 'w-10')}>
+    <Avatar className={cn('h-9', 'w-9')}>
       {avatar && (
         <AvatarImage
           src={avatar}
