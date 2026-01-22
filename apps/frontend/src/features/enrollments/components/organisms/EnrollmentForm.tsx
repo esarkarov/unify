@@ -13,7 +13,7 @@ interface EnrollmentFormProps {
   form: ReturnType<typeof useForm<EnrollmentFormValues>>;
   onSubmit: (values: EnrollmentFormValues) => Promise<void>;
   classes: ClassDetails[];
-  isClassesLoading: boolean;
+  isLoading: boolean;
   currentUser: User | undefined;
   isSubmitting: boolean;
   isSubmitDisabled: boolean;
@@ -23,7 +23,7 @@ export const EnrollmentForm = ({
   form,
   onSubmit,
   classes,
-  isClassesLoading,
+  isLoading,
   currentUser,
   isSubmitting,
   isSubmitDisabled,
@@ -44,7 +44,7 @@ export const EnrollmentForm = ({
             <ClassSelectField
               control={form.control}
               classes={classes}
-              isLoading={isClassesLoading}
+              isLoading={isLoading}
             />
 
             <StudentInfoField currentUser={currentUser} />

@@ -18,7 +18,7 @@ const DepartmentDetailsPage = () => {
   });
 
   const { subjectsTable, classesTable, teachersTable, studentsTable } = useDepartmentTables({
-    departmentId: id!,
+    id,
   });
 
   const details = data?.data;

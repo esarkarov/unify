@@ -19,7 +19,7 @@ const SubjectDetailsPage = () => {
   });
 
   const { classesTable, teachersTable, studentsTable } = useSubjectTables({
-    subjectId: id,
+    id,
   });
 
   const details = data?.data;

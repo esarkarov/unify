@@ -16,6 +16,10 @@ const SubjectsListPage = () => {
   const filters = useMemo(() => {
     const filterList = [];
 
+    if (!searchQuery.trim()) {
+      return [];
+    }
+
     if (selectedDepartment !== ALL_DEPARTMENTS) {
       filterList.push({
         field: 'department',
@@ -38,7 +42,6 @@ const SubjectsListPage = () => {
   const { subjectsTable } = useSubjectTables({
     filters,
   });
-
   const { isLoading, isError, error } = subjectsTable.refineCore.tableQuery;
 
   if (isLoading) {

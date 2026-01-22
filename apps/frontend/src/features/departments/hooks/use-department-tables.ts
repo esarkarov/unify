@@ -11,12 +11,11 @@ import { useTable } from '@refinedev/react-table';
 import { useMemo } from 'react';
 
 interface UseDepartmentTablesParams {
-  departmentId?: string;
-  pageSize?: number;
+  id?: string;
   filters?: Filter[];
 }
 
-export const useDepartmentTables = ({ departmentId, pageSize = PAGE_SIZE, filters }: UseDepartmentTablesParams) => {
+export const useDepartmentTables = ({ id, filters }: UseDepartmentTablesParams) => {
   const subjectColumns = useMemo(() => subjectTableColumns(), []);
   const classColumns = useMemo(() => classTableColumns(), []);
   const userColumns = useMemo(() => userTableColumns(), []);
@@ -25,9 +24,9 @@ export const useDepartmentTables = ({ departmentId, pageSize = PAGE_SIZE, filter
   const subjectsTable = useTable<DepartmentSubject>({
     columns: subjectColumns,
     refineCoreProps: {
-      resource: `departments/${departmentId}/subjects`,
+      resource: `departments/${id}/subjects`,
       pagination: {
-        pageSize,
+        pageSize: PAGE_SIZE,
         mode: 'server',
       },
     },
@@ -35,9 +34,9 @@ export const useDepartmentTables = ({ departmentId, pageSize = PAGE_SIZE, filter
   const classesTable = useTable<DepartmentClass>({
     columns: classColumns,
     refineCoreProps: {
-      resource: `departments/${departmentId}/classes`,
+      resource: `departments/${id}/classes`,
       pagination: {
-        pageSize,
+        pageSize: PAGE_SIZE,
         mode: 'server',
       },
     },
@@ -45,9 +44,9 @@ export const useDepartmentTables = ({ departmentId, pageSize = PAGE_SIZE, filter
   const teachersTable = useTable<DepartmentUser>({
     columns: userColumns,
     refineCoreProps: {
-      resource: `departments/${departmentId}/users`,
+      resource: `departments/${id}/users`,
       pagination: {
-        pageSize,
+        pageSize: PAGE_SIZE,
         mode: 'server',
       },
       filters: {
@@ -64,9 +63,9 @@ export const useDepartmentTables = ({ departmentId, pageSize = PAGE_SIZE, filter
   const studentsTable = useTable<DepartmentUser>({
     columns: userColumns,
     refineCoreProps: {
-      resource: `departments/${departmentId}/users`,
+      resource: `departments/${id}/users`,
       pagination: {
-        pageSize,
+        pageSize: PAGE_SIZE,
         mode: 'server',
       },
       filters: {

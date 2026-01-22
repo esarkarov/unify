@@ -20,13 +20,14 @@ const EnrollmentCreatePage = () => {
     mutation: { isPending },
   } = useCreate();
 
-  const { query: classesQuery } = useList<ClassDetails>({
+  const {
+    query: { data, isLoading },
+  } = useList<ClassDetails>({
     resource: 'classes',
     pagination: { pageSize: CLASSES_PAGE_SIZE },
   });
 
-  const classes = classesQuery.data?.data ?? [];
-  const isClassesLoading = classesQuery.isLoading;
+  const classes = data?.data ?? [];
 
   const form = useForm<EnrollmentFormValues>({
     resolver: zodResolver(enrollmentSchema),
@@ -51,7 +52,7 @@ const EnrollmentCreatePage = () => {
     });
   };
 
-  const isSubmitDisabled = isPending || isClassesLoading || !currentUser?.id || !classes.length || !selectedClassId;
+  const isSubmitDisabled = isPending || isLoading || !currentUser?.id || !classes.length || !selectedClassId;
 
   return (
     <CreateView className="class-view">
@@ -68,7 +69,7 @@ const EnrollmentCreatePage = () => {
         form={form}
         onSubmit={handleSubmit}
         classes={classes}
-        isClassesLoading={isClassesLoading}
+        isLoading={isLoading}
         currentUser={currentUser}
         isSubmitting={isPending}
         isSubmitDisabled={isSubmitDisabled}
