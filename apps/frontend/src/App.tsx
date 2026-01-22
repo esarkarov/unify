@@ -1,20 +1,17 @@
-import LoginPage from '@/features/auth/pages/LoginPage';
-import RegisterPage from '@/features/auth/pages/RegisterPage';
-import ClassCreatePage from '@/features/classes/pages/ClassCreatePage';
-import ClassDetailsPage from '@/features/classes/pages/ClassDetailsPage';
-import ClassesListPage from '@/features/classes/pages/ClassesListPage';
-import DashboardPage from '@/features/dashboard/pages/DashboardPage';
-import DepartmentCreatePage from '@/features/departments/pages/DepartmentCreatePage';
-import DepartmentDetailsPage from '@/features/departments/pages/DepartmentDetailsPage';
-import DepartmentsListPage from '@/features/departments/pages/DepartmentsListPage';
-import EnrollmentConfirmationPage from '@/features/enrollments/pages/EnrollmentConfirmationPage';
-import EnrollmentCreatePage from '@/features/enrollments/pages/EnrollmentCreatePage';
-import EnrollmentsJoinPage from '@/features/enrollments/pages/EnrollmentsJoinPage';
-import FacultyDetailsPage from '@/features/faculty/pages/FacultyDetailsPage';
-import FacultyListPage from '@/features/faculty/pages/FacultyListPage';
-import SubjectCreatePage from '@/features/subjects/pages/SubjectCreatePage';
-import SubjectDetailsPage from '@/features/subjects/pages/SubjectDetailsPage';
-import SubjectsListPage from '@/features/subjects/pages/SubjectsListPage';
+import { authRoutes } from '@/features/auth/router';
+import { classResources } from '@/features/classes/resources';
+import { classRoutes } from '@/features/classes/router';
+import { dashboardResources } from '@/features/dashboard/resources';
+import { dashboardRoutes } from '@/features/dashboard/router';
+import { departmentResources } from '@/features/departments/resources';
+import { departmentRoutes } from '@/features/departments/router';
+import { enrollmentResources } from '@/features/enrollments/resources';
+import { enrollmentRoutes } from '@/features/enrollments/router';
+import { facultyResources } from '@/features/faculty/resources';
+import { facultyRoutes } from '@/features/faculty/router';
+import { subjectResources } from '@/features/subjects/resources';
+import { subjectRoutes } from '@/features/subjects/router';
+import { PageLoader } from '@/shared/components/atoms/PageLoader';
 import { Layout } from '@/shared/components/refine-ui/layout/layout';
 import { Toaster } from '@/shared/components/refine-ui/notification/toaster';
 import { useNotificationProvider } from '@/shared/components/refine-ui/notification/use-notification-provider';
@@ -25,17 +22,39 @@ import { dataProvider } from '@/shared/providers/data';
 import { Authenticated, Refine } from '@refinedev/core';
 import { DevtoolsPanel } from '@refinedev/devtools';
 import { RefineKbar, RefineKbarProvider } from '@refinedev/kbar';
-import routerProvider, {
-  DocumentTitleHandler,
-  NavigateToResource,
-  UnsavedChangesNotifier,
-} from '@refinedev/react-router';
+import routerProvider, { DocumentTitleHandler, UnsavedChangesNotifier } from '@refinedev/react-router';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { BookOpen, Building2, ClipboardCheck, GraduationCap, Home, Users } from 'lucide-react';
+import { Suspense, useMemo } from 'react';
 import { BrowserRouter, Outlet, Route, Routes } from 'react-router';
 import './App.css';
 
+const useRefineResources = () =>
+  useMemo(
+    () => [
+      ...dashboardResources,
+      ...subjectResources,
+      ...departmentResources,
+      ...classResources,
+      ...facultyResources,
+      ...enrollmentResources,
+    ],
+    []
+  );
+
+const useRefineOptions = () =>
+  useMemo(
+    () => ({
+      syncWithLocation: true,
+      warnWhenUnsavedChanges: true,
+      projectId: 'WUucMT-L7xLu7-lVsXXt',
+    }),
+    []
+  );
+
 function App() {
+  const resources = useRefineResources();
+  const options = useRefineOptions();
+
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
@@ -46,167 +65,26 @@ function App() {
               authProvider={authProvider}
               notificationProvider={useNotificationProvider()}
               routerProvider={routerProvider}
-              options={{
-                syncWithLocation: true,
-                warnWhenUnsavedChanges: true,
-                projectId: 'WUucMT-L7xLu7-lVsXXt',
-              }}
-              resources={[
-                {
-                  name: 'dashboard',
-                  list: '/',
-                  meta: {
-                    label: 'Home',
-                    icon: <Home />,
-                  },
-                },
-                {
-                  name: 'subjects',
-                  list: '/subjects',
-                  create: '/subjects/create',
-                  show: '/subjects/show/:id',
-                  meta: {
-                    label: 'Subjects',
-                    icon: <BookOpen />,
-                  },
-                },
-                {
-                  name: 'departments',
-                  list: '/departments',
-                  create: '/departments/create',
-                  show: '/departments/show/:id',
-                  meta: {
-                    label: 'Departments',
-                    icon: <Building2 />,
-                  },
-                },
-                {
-                  name: 'classes',
-                  list: '/classes',
-                  create: '/classes/create',
-                  show: '/classes/show/:id',
-                  meta: {
-                    label: 'Classes',
-                    icon: <GraduationCap />,
-                  },
-                },
-                {
-                  name: 'users',
-                  list: '/faculty',
-                  show: '/faculty/show/:id',
-                  meta: {
-                    label: 'Faculty',
-                    icon: <Users />,
-                  },
-                },
-                {
-                  name: 'enrollments',
-                  list: '/enrollments/create',
-                  create: '/enrollments/create',
-                  meta: {
-                    label: 'Enrollments',
-                    icon: <ClipboardCheck />,
-                  },
-                },
-              ]}>
+              options={options}
+              resources={resources}>
               <Routes>
-                <Route
-                  element={
-                    <Authenticated
-                      key="public-routes"
-                      fallback={<Outlet />}>
-                      <NavigateToResource fallbackTo="/" />
-                    </Authenticated>
-                  }>
-                  <Route
-                    path="/login"
-                    element={<LoginPage />}
-                  />
-                  <Route
-                    path="/register"
-                    element={<RegisterPage />}
-                  />
-                </Route>
+                {authRoutes}
                 <Route
                   element={
                     <Authenticated key="private-routes">
                       <Layout>
-                        <Outlet />
+                        <Suspense fallback={<PageLoader />}>
+                          <Outlet />
+                        </Suspense>
                       </Layout>
                     </Authenticated>
                   }>
-                  <Route
-                    path="/"
-                    element={<DashboardPage />}
-                  />
-
-                  <Route path="subjects">
-                    <Route
-                      index
-                      element={<SubjectsListPage />}
-                    />
-                    <Route
-                      path="create"
-                      element={<SubjectCreatePage />}
-                    />
-                    <Route
-                      path="show/:id"
-                      element={<SubjectDetailsPage />}
-                    />
-                  </Route>
-                  <Route path="departments">
-                    <Route
-                      index
-                      element={<DepartmentsListPage />}
-                    />
-                    <Route
-                      path="create"
-                      element={<DepartmentCreatePage />}
-                    />
-                    <Route
-                      path="show/:id"
-                      element={<DepartmentDetailsPage />}
-                    />
-                  </Route>
-
-                  <Route path="classes">
-                    <Route
-                      index
-                      element={<ClassesListPage />}
-                    />
-                    <Route
-                      path="create"
-                      element={<ClassCreatePage />}
-                    />
-                    <Route
-                      path="show/:id"
-                      element={<ClassDetailsPage />}
-                    />
-                  </Route>
-                  <Route path="faculty">
-                    <Route
-                      index
-                      element={<FacultyListPage />}
-                    />
-                    <Route
-                      path="show/:id"
-                      element={<FacultyDetailsPage />}
-                    />
-                  </Route>
-                  <Route path="enrollments">
-                    <Route
-                      path="create"
-                      element={<EnrollmentCreatePage />}
-                    />
-                    <Route
-                      path="join"
-                      element={<EnrollmentsJoinPage />}
-                    />
-                    <Route
-                      path="confirm"
-                      element={<EnrollmentConfirmationPage />}
-                    />
-                  </Route>
+                  {dashboardRoutes}
+                  {subjectRoutes}
+                  {departmentRoutes}
+                  {classRoutes}
+                  {facultyRoutes}
+                  {enrollmentRoutes}
                 </Route>
               </Routes>
 
