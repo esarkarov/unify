@@ -6,6 +6,7 @@ export interface ClassListItem {
   id: number;
   name: string;
   status: 'active' | 'inactive';
+  createdAt?: string;
   bannerUrl?: string;
   subject?: {
     name: string;

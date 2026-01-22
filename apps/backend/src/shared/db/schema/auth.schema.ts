@@ -3,7 +3,7 @@ import { boolean, index, pgEnum, pgTable, text, timestamp, uniqueIndex } from 'd
 
 import { timestamps } from '@/shared/db/schema/common.schema';
 
-export const roleEnum = pgEnum('role', ['student', 'teacher', 'admin']);
+export const roleEnum = pgEnum('role', ['student', 'teacher']);
 
 export const user = pgTable('user', {
   email: text('email').notNull(),
