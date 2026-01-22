@@ -87,3 +87,17 @@ export type Schedule = {
 };
 
 export type Status = 'active' | 'inactive' | 'pending' | 'completed' | 'cancelled';
+
+interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface ApiResponse<T = unknown> {
+  data?: T;
+  pagination?: PaginationMeta;
+}
+
+export type QueryParams = Record<string, string | number>;

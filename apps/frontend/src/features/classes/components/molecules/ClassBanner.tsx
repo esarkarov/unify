@@ -1,4 +1,4 @@
-import { bannerPhoto } from '@/shared/lib/cloudinary';
+import { generateBanner } from '@/shared/lib/utils';
 import { AdvancedImage } from '@cloudinary/react';
 
 interface ClassBannerProps {
@@ -23,7 +23,7 @@ export const ClassBanner = ({ bannerUrl, bannerCldPubId, className, alt = 'Class
   if (isCloudinaryUrl) {
     return (
       <AdvancedImage
-        cldImg={bannerPhoto(bannerCldPubId, className)}
+        cldImg={generateBanner(bannerCldPubId, className)}
         alt={alt}
       />
     );

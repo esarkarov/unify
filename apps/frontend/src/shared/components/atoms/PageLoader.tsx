@@ -1,5 +1,11 @@
-export const PageLoader = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary" />
-  </div>
-);
+export function PageLoader() {
+  return (
+    <div
+      className="flex items-center justify-center min-h-screen"
+      role="status"
+      aria-live="polite">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+      <span className="sr-only">Loading page...</span>
+    </div>
+  );
+}
