@@ -1,5 +1,5 @@
-import { RESOURCE_FILTERS, SEARCHABLE_FIELDS, STORAGE_KEY } from '@/shared/providers/constants';
-import { ApiResponse, QueryParams } from '@/shared/providers/types';
+import { RESOURCE_FILTERS, SEARCHABLE_FIELDS, STORAGE_KEY } from '@/shared/constants';
+import { ApiResponse, QueryParams } from '@/shared/types';
 import { AuthActionResponse, CrudFilter } from '@refinedev/core';
 import { User } from 'better-auth/types';
 

@@ -6,12 +6,11 @@ import { useTable } from '@refinedev/react-table';
 import { useMemo } from 'react';
 
 interface UseSubjectTablesParams {
-  subjectId?: string;
-  pageSize?: number;
+  id?: string;
   filters?: Filter[];
 }
 
-export const useSubjectTables = ({ subjectId, pageSize = PAGE_SIZE, filters }: UseSubjectTablesParams) => {
+export const useSubjectTables = ({ id, filters }: UseSubjectTablesParams) => {
   const classColumns = useMemo(() => classTableColumns(), []);
   const userColumns = useMemo(() => userTableColumns(), []);
   const subjectColumns = useMemo(() => subjectTableColumns(), []);
@@ -40,9 +39,9 @@ export const useSubjectTables = ({ subjectId, pageSize = PAGE_SIZE, filters }: U
   const classesTable = useTable<SubjectClass>({
     columns: classColumns,
     refineCoreProps: {
-      resource: `subjects/${subjectId}/classes`,
+      resource: `subjects/${id}/classes`,
       pagination: {
-        pageSize,
+        pageSize: PAGE_SIZE,
         mode: 'server',
       },
     },
@@ -50,9 +49,9 @@ export const useSubjectTables = ({ subjectId, pageSize = PAGE_SIZE, filters }: U
   const teachersTable = useTable<SubjectUser>({
     columns: userColumns,
     refineCoreProps: {
-      resource: `subjects/${subjectId}/users`,
+      resource: `subjects/${id}/users`,
       pagination: {
-        pageSize,
+        pageSize: PAGE_SIZE,
         mode: 'server',
       },
       filters: {
@@ -69,9 +68,9 @@ export const useSubjectTables = ({ subjectId, pageSize = PAGE_SIZE, filters }: U
   const studentsTable = useTable<SubjectUser>({
     columns: userColumns,
     refineCoreProps: {
-      resource: `subjects/${subjectId}/users`,
+      resource: `subjects/${id}/users`,
       pagination: {
-        pageSize,
+        pageSize: PAGE_SIZE,
         mode: 'server',
       },
       filters: {

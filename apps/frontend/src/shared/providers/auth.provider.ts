@@ -1,5 +1,5 @@
+import { ERROR_MESSAGES } from '@/shared/constants';
 import { authClient } from '@/shared/lib/auth-client';
-import { ERROR_MESSAGES } from '@/shared/providers/constants';
 import { SignUpPayload } from '@/shared/types';
 import type { AuthActionResponse, AuthProvider, CheckResponse } from '@refinedev/core';
 import { createErrorResponse, createSuccessResponse, getStoredUser, removeUser, storeUser } from './helpers';

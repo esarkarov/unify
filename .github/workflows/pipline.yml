@@ -58,6 +58,15 @@ jobs:
       - name: TypeScript type check (All Apps)
         run: pnpm type-check
 
+      - name: Run Trivy SCA
+        uses: aquasecurity/trivy-action@0.30.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          severity: 'HIGH,CRITICAL'
+
   build-frontend:
     name: Build Frontend
     runs-on: ubuntu-latest

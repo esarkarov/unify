@@ -80,4 +80,24 @@ export interface Filter {
   value: string;
 }
 
+export type Schedule = {
+  day: string;
+  startTime: string;
+  endTime: string;
+};
+
 export type Status = 'active' | 'inactive' | 'pending' | 'completed' | 'cancelled';
+
+interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface ApiResponse<T = unknown> {
+  data?: T;
+  pagination?: PaginationMeta;
+}
+
+export type QueryParams = Record<string, string | number>;
