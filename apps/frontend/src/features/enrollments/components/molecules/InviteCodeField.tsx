@@ -1,4 +1,4 @@
-import { EnrollmentJoinFormValues } from '@/features/enrollments/validation';
+import type { EnrollmentJoinFormValues } from '@/features/enrollments/validation';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form';
 import { Input } from '@/shared/components/ui/input';
 import { useForm } from 'react-hook-form';

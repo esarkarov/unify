@@ -1,5 +1,5 @@
 import { ClassDetails } from '@/features/classes/types';
-import { EnrollmentFormValues } from '@/features/enrollments/validation';
+import type { EnrollmentFormValues } from '@/features/enrollments/validation';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { useForm } from 'react-hook-form';
