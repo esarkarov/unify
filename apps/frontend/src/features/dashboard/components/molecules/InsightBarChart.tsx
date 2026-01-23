@@ -1,15 +1,14 @@
-import { BarChartData } from '@/features/dashboard/types';
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-interface InsightBarChartProps {
+interface InsightBarChartProps<T> {
   title: string;
-  data: BarChartData[];
+  data: T[];
   dataKey: string;
   xAxisKey: string;
   barColor: string;
 }
 
-export const InsightBarChart = ({ title, data, dataKey, xAxisKey, barColor }: InsightBarChartProps) => {
+export const InsightBarChart = <T,>({ title, data, dataKey, xAxisKey, barColor }: InsightBarChartProps<T>) => {
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-semibold text-muted-foreground">{title}</h3>

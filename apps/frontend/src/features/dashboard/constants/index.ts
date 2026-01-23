@@ -1,6 +1,6 @@
 import { BookOpen, Building2, GraduationCap, Layers, Users } from 'lucide-react';
 
-export const ROLE_COLORS = ['#f97316', '#0ea5e9', '#22c55e', '#a855f7'] as const;
+export const ROLE_COLORS = ['#0ea5e9', '#22c55e'];
 
 export const CHART_COLORS = {
   SUBJECTS_BY_DEPT: '#f97316',

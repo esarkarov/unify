@@ -74,6 +74,15 @@ const options: CreateDataProviderOptions = {
       return (payload.data ?? []) as T[];
     },
   },
+
+  custom: {
+    buildQueryParams: async ({ query }) => query ?? {},
+
+    mapResponse: async <T>(response: Response): Promise<T> => {
+      const data = await parseJsonResponse<T>(response);
+      return (data.data ?? data) as T;
+    },
+  },
 };
 
 export const { dataProvider } = createDataProvider(BACKEND_API_URL, options);
